@@ -93,7 +93,14 @@ class BucketlistTestCases(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         #test if the bucket has been deleted
         result = self.client().get('/api/bucketlists/1/')
-        self.assertEqual(result.status_code, 404)                    
+        self.assertEqual(result.status_code, 404)  
+
+    def test_delete_bucketlist_with_invalid_id(self):
+        """Test API to delete a non existing bucketlist """
+        result = self.client().post('/api/bucketlists/', data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)
+        result = self.client().delete('/api/bucketlists/29/')
+        self.assertEqual(result.status_code, 404)                      
 
     def tearDown(self):
         """teardown all initialized variables."""
