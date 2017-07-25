@@ -55,7 +55,14 @@ class BucketlistTestCases(unittest.TestCase):
     def test_get_bucket_with_empty_database(self):
         """Test API to get from and empty database"""
         response = self.client().post('/api/bucketlists/')
-        self.assertEqual(response.data, 404)            
+        self.assertEqual(response.data, 404)   
+
+    def test_get_bucketlist_with_invalid_id(self):
+        """Test API to get a non existing bucketlist """
+        result = self.client().post('/api/bucketlists/', data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)
+        result = self.client().get('/api/bucketlists/29/')
+        self.assertEqual(result.status_code, 404)             
 
     def tearDown(self):
         """teardown all initialized variables."""
