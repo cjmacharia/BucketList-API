@@ -29,7 +29,13 @@ class BucketitemsTestCases(unittest.TestCase):
         res = self.client().post('/api/bucketlists/1/items/', data=self.item)
         self.assertEqual(res.status_code, 201)
         self.assertIn('hawai  skies yeeey', res.data.decode('utf-8'))
-        
+
+    def test_create_item_with_invalid_bucket(self):    
+        result = self.client().post("/api/bucketlists/", data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)  
+        res = self.client().post('/api/bucketlists/30/items/', data=self.item)
+        self.assertEqual(res.status_code, 404)    
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()            
