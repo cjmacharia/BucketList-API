@@ -76,7 +76,14 @@ class BucketlistTestCases(unittest.TestCase):
         })
         self.assertEqual(result.status_code, 200)
         endresult = self.client().get('/api/bucketlists/1/')
-        self.assertIn('play the guitar and the piano', endresult.data.decode('utf-8'))             
+        self.assertIn('play the guitar and the piano', endresult.data.decode('utf-8'))
+
+    def test_edit_buckettlist_with_invalid_id(self):
+        """Test API to edit a non existing bucketlist """
+        result = self.client().post('/api/bucketlists/', data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)
+        result = self.client().put('/api/bucketlists/29/')
+        self.assertEqual(result.status_code, 404)                 
 
     def tearDown(self):
         """teardown all initialized variables."""
