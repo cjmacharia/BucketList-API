@@ -36,14 +36,21 @@ class BucketlistTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/", data=self.bucketlist)
         self.assertEqual(result.status_code, 201)     
         self.assertIn('Go for skydiving', result.data.decode('utf-8'))
-        
+
     def test_get_all_bucketlists(self):
         """Test API to get  bucketlists (GET request)."""
         result = self.client().post('/api/bucketlists/', data=self.bucketlist)
         self.assertEqual(result.status_code, 201)
         result = self.client().get('/api/bucketlists/')
         self.assertEqual(result.status_code, 200)
-        self.assertIn('Go for skydiving', result.data.decode('utf-8'))        
+        self.assertIn('Go for skydiving', result.data.decode('utf-8'))    
+
+    def test_get_bucketlist_by_id(self):
+        """Test API to get  bucketlist with its id (GET request)."""
+        result = self.client().post('/api/bucketlists/', data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)
+        result = self.client().get('/api/bucketlists/1/')
+        self.assertEqual(result.status_code, 200)        
 
     def tearDown(self):
         """teardown all initialized variables."""
