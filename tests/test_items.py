@@ -43,7 +43,15 @@ class BucketitemsTestCases(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         the_item = self.client().get('/api/bucketlists/1/items/1/')
         self.assertEqual(the_item.status_code, 200)
-        self.assertIn('hawai  skies yeeey', the_item.data.decode('utf-8'))     
+        self.assertIn('hawai  skies yeeey', the_item.data.decode('utf-8'))  
+
+    def test_get_bucket_item_with_invalid_id(self):
+        result = self.client().post("/api/bucketlists/", data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)  
+        res = self.client().post('/api/bucketlists/1/items/', data=self.item)
+        self.assertEqual(res.status_code, 201)
+        the_item = self.client().get('/api/bucketlists/1/items/20/')
+        self.assertEqual(the_item.status_code, 404)        
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
