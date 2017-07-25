@@ -70,7 +70,15 @@ class BucketitemsTestCases(unittest.TestCase):
         res = self.client().post('/api/bucketlists/1/items/', data=self.item)
         self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/bucketlists/1/items/', data=self.item)
-        self.assertIn('The item already exist', res.data.decode('utf-8'))         
+        self.assertIn('The item already exist', res.data.decode('utf-8'))   
+
+    def test_edit_item_that_doesnot_exist(self):
+        result = self.client().post('/api/bucketlists/', data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)  
+        res = self.client().put('/api/bucketlists/1/items/19/', data={
+            'name':'go to the bermuda with my family'
+        })
+        self.assertEqual(res.status_code, 404)          
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
