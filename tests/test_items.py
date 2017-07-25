@@ -51,7 +51,18 @@ class BucketitemsTestCases(unittest.TestCase):
         res = self.client().post('/api/bucketlists/1/items/', data=self.item)
         self.assertEqual(res.status_code, 201)
         the_item = self.client().get('/api/bucketlists/1/items/20/')
-        self.assertEqual(the_item.status_code, 404)        
+        self.assertEqual(the_item.status_code, 404)   
+
+    def test_edit_item(self):
+        result = self.client().post("/api/bucketlists/", data=self.bucketlist)
+        self.assertEqual(result.status_code, 201)  
+        res = self.client().post('/api/bucketlists/1/items/', data={
+            'name':'go to the bermuda'})
+        self.assertEqual(res.status_code, 201)
+        res = self.client().put('/api/bucketlists/1/items/1/', data={
+            'name':'go to the bermuda with my family'
+        })
+        self.assertEqual(res.status_code, 200)         
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
