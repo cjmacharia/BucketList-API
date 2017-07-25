@@ -94,7 +94,15 @@ class BucketitemsTestCases(unittest.TestCase):
         res = self.client().post('/api/bucketlists/1/items/', data=self.item)
         self.assertEqual(res.status_code, 201)
         res = self.client().delete('/api/bucketlists/1/items/18/', data=self.item)
-        self.assertEqual(res.status_code, 404)    
+        self.assertEqual(res.status_code, 404)  
+
+    def test_delete_items_with_invalid_bucket_id(self):
+        result = self.client().post('/api/bucketlists/', data=self.bucketlist)
+        self.assertEqual(result.status_code, 201) 
+        res = self.client().post('/api/bucketlists/1/items/', data=self.item)
+        self.assertEqual(res.status_code, 201)
+        res = self.client().delete('/api/bucketlists/19/items/1/', data=self.item)
+        self.assertEqual(res.status_code, 404)       
             
 
 # Make the tests conveniently executable
