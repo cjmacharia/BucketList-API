@@ -19,7 +19,15 @@ class BucketlistTestCases(unittest.TestCase):
             # create all tables
             db.create_all()    
 
-
+    def test_create_bucket_without_name(self):
+        """
+        Test the creation of an empty bucketlist 
+        """
+        res = self.client().post("/api/bucketlists/", data={
+            'name':''
+        })        
+        self.assertEqual(res.status_code, 403)
+        self.assertIn('you need to fill the name field', res.data.decode('utf-8'))
 
     def tearDown(self):
         """teardown all initialized variables."""
