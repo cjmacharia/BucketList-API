@@ -50,7 +50,12 @@ class BucketlistTestCases(unittest.TestCase):
         result = self.client().post('/api/bucketlists/', data=self.bucketlist)
         self.assertEqual(result.status_code, 201)
         result = self.client().get('/api/bucketlists/1/')
-        self.assertEqual(result.status_code, 200)        
+        self.assertEqual(result.status_code, 200)
+
+    def test_get_bucket_with_empty_database(self):
+        """Test API to get from and empty database"""
+        response = self.client().post('/api/bucketlists/')
+        self.assertEqual(response.data, 404)            
 
     def tearDown(self):
         """teardown all initialized variables."""
