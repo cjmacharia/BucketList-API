@@ -23,3 +23,12 @@ class AuthTestCases(unittest.TestCase):
             db.session.close()
             db.drop_all()
             db.create_all()
+
+    def test_registration(self):
+        """
+        Test new user registration
+        """
+        result = self.client().post("/api/bucketlists/auth/register/", data=self.user_data,
+                                    content_type="application/json")
+        results = json.loads(result.data.decode())
+        self.assertEqual(result.status_code, 201)        
