@@ -45,7 +45,7 @@ class AuthTestCases(unittest.TestCase):
         second_result = self.client().post("/api/bucketlists/auth/register/",
                                            data=self.user_data,
                                            content_type="application/json")
-        self.assertEqual(second_result.status_code, 409)      
+        self.assertEqual(second_result.status_code, 409)
 
     def test_register_with_a_nonexistent_url(self):
         response = self.client().post('/bucketlist/api/auth/regist/', data=self.user_data)
@@ -64,8 +64,8 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/register/", data=res,
                                     content_type="application/json")
         final_result = json.loads(result.data.decode())
-        self.assertEqual(result.status_code, 400)     
-
+        self.assertEqual(result.status_code, 400)
+    
     def test_registration_no_password(self):
         """
         Test that missing password throws an error
@@ -79,7 +79,25 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/register/", data=res,
                                     content_type="application/json")
         result = json.loads(result.data)
-        self.assertEqual(result.status_code, 400)  
+        self.assertEqual(result.status_code, 400)
+    
+    def test_login(self):
+        """
+        Test that a user can login successfully
+        """
+        result = self.client().post("/api/bucketlists/auth/register/", data=self.user_data,
+                                    content_type="application/json")
+        self.assertEqual(result.status_code, 201)
+
+        login_result = self.client().post("/api/bucketlists/auth/login/", data=self.user_data,
+                                          content_type="application/json")
+        results = json.loads(login_result.data.decode())
+
+        # Confirm the success message
+        self.assertEqual(results["message"], "You logged in successfully.")
+        # Confirm the status code and access token
+        self.assertEqual(login_result.status_code, 200)
+        self.assertTrue(results["access_token"])
 
     def test_login_non_registered_user(self):
         """
@@ -110,8 +128,13 @@ class AuthTestCases(unittest.TestCase):
                                     content_type="application/json")
         final_result = json.loads(result.data.decode())
 
-        self.assertEqual(result.status_code, 401) 
+        self.assertEqual(result.status_code, 401)
 
+    
+    def test_login_with_a_nonexistent_url(self):
+        response = self.client().post('/bucketlist/api/auth/logon/', data=self.user_data)
+        self.assertEqual(response.status_code, 404)     
+        
     def test_login_missing_username(self):
         """
         Test that missing email
@@ -129,5 +152,3 @@ class AuthTestCases(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-       
-           
