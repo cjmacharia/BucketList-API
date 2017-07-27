@@ -64,4 +64,19 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/register/", data=res,
                                     content_type="application/json")
         final_result = json.loads(result.data.decode())
-        self.assertEqual(result.status_code, 400)          
+        self.assertEqual(result.status_code, 400)     
+
+    def test_registration_no_password(self):
+        """
+        Test that missing password throws an error
+        """
+        res = json.dumps(dict({
+            "username": "testuser",
+            "password": "",
+            "email": "testuser@gmail.com"
+        }))
+
+        result = self.client().post("/api/bucketlists/auth/register/", data=res,
+                                    content_type="application/json")
+        result = json.loads(result.data)
+        self.assertEqual(result.status_code, 400)         
