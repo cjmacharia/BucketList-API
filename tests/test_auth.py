@@ -79,4 +79,21 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/register/", data=res,
                                     content_type="application/json")
         result = json.loads(result.data)
-        self.assertEqual(result.status_code, 400)         
+        self.assertEqual(result.status_code, 400)  
+
+    def test_login_non_registered_user(self):
+        """
+        Test that non registered users cannot log in
+        """
+        unregistered = json.dumps(dict({
+            "username": "tiaroot",
+            "email": "tiaroot@email.com",
+            "password": "invalidpassword"
+        }))
+
+        result = self.client().post("/api/bucketlists/auth/login/", data=unregistered,
+                                    content_type="application/json")
+        final_result = json.loads(result.data.decode())
+
+        self.assertEqual(result.status_code, 401)
+           
