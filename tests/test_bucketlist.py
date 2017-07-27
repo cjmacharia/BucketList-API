@@ -1,5 +1,6 @@
 import unittest
 from app.app import create_app, db
+from flask import json
 
 
 class BucketlistTestCases(unittest.TestCase):
@@ -18,6 +19,28 @@ class BucketlistTestCases(unittest.TestCase):
         with self.app.app_context():
             # create all tables
             db.create_all()    
+
+         # Register a that we will use to test
+        self.user_data = json.dumps(dict({
+            "username": "testuser",
+            "email": "cj@test.com",
+            "password": "test"
+                }))
+        self.client().post("/api/bucketlists/auth/register/", data=self.user_data,
+                           content_type="application/json")
+
+        self.login_info = json.dumps(dict({
+            "email": "cj@test.com",
+            "password": "test"
+        }))
+        # Log is as the test user and get a token
+        self.login_result = self.client().post("/api/bucketlists/auth/login/",
+                                               data=self.login_info,
+                                               content_type="application/json")
+        self.access_token = json.loads(
+            self.login_result.data.decode())['access_token']   
+        print (self.access_token)      
+        self.headers =dict(Authorization="Bearer "+ self.access_token, content_type = "application/json")    
 
     def test_create_bucket_without_name(self):
         """
