@@ -31,4 +31,18 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/register/", data=self.user_data,
                                     content_type="application/json")
         results = json.loads(result.data.decode())
-        self.assertEqual(result.status_code, 201)        
+        self.assertEqual(result.status_code, 201)
+
+    def test_double_registration(self):
+        """
+        Test that double registration
+        """
+        result = self.client().post("/api/bucketlists/auth/register/", data=self.user_data,
+                                    content_type="application/json")
+        self.assertEqual(result.status_code, 201)
+
+        # Test double registration
+        second_result = self.client().post("/api/bucketlists/auth/register/",
+                                           data=self.user_data,
+                                           content_type="application/json")
+        self.assertEqual(second_result.status_code, 409)            
