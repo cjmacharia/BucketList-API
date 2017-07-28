@@ -46,8 +46,8 @@ Interact with the API, send http requests using Postman
 # API Endpoints
 
 URL Endpoint	                     HTTP Methods	Summary
-/api/bucketlists/auth/register/         POST	    Register a new user
-/api/bucketlists/auth/login/	            POST	Login and retrieve token
+/api/bucketlists/auth/register/         POST	 Register a new user
+/api/bucketlists/auth/login/	        POST	 Login and retrieve token
 /api/bucketlists/	                    POST	Create a new Bucketlist
 /api/bucketlists/	                    GET	     Retrieve all bucketlists for user
 /api/bucketlists/<id>/              	GET	     Retrieve a bucketlist by ID
