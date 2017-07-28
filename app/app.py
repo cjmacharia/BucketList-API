@@ -14,7 +14,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     """function wraps the creation of a new Flask object, 
     and returns it after it's loaded up with 
-    configuration settings using"""
+    configuration settings """
 
     from models import BucketList, Item, User
     app = FlaskAPI(__name__, instance_relative_config=True)
@@ -158,39 +158,41 @@ def create_app(config_name):
                 return response
 
 
-    @app.route("/api/bucketlists/", methods=["POST", "GET"])
-    def create_bucketlists():
-        if request.method == "POST":
-            name = str(request.data.get('name', ''))
-            if name:
-                bucketlist = BucketList(name=name)
-                bucketlist.save()
-                response = jsonify({
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified
-                })
-                response.status_code = 201
-                return response
-            else:
-                response = jsonify({
-                    'you need to fill the name field'
-                })
-                response.status_code = 403
+    @app.route('/api/bucketlists/<int:bid>/', methods=['GET', 'PUT', 'DELETE'])
+    @auth_token
+    def bucketlist_manipulation(bid, user_id):
+     # retrieve a buckelist using it's ID
+        bucketlist = BucketList.query.filter_by(id=bid, created_by=user_id).first()
+        if not bucketlist:
+            # Raise an HTTPException with a 404 not found status code
+            response = jsonify({
+                'message':'the bucketlist doesnot exist'
+            })
+            response.status_code = 404
+            return response 
+
+        if request.method == 'DELETE':
+            bucketlist.delete()
+            return {
+            "message": "bucketlist {} deleted successfully".format(bucketlist.id) 
+         }, 200
+
+        elif request.method == 'PUT':
+            name = request.data.get('name')
+            bucketlist.name = name
+            bucketlist.save()
+            response = jsonify({
+                "message":"Successfully updated"
+            })
+            response.status_code = 200
+            return response
         else:
             # GET
-            allbucketlists = BucketList.get_all()
-            # Return the bucket lists
-            content = []
-            for bucketlist in allbucketlists:
-                bucket = {
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified
-                }
-                content.append(bucket)
-            response = jsonify(content)
+            response = jsonify({
+                'id': bucketlist.id,
+                'name': bucketlist.name,
+                'date_created': bucketlist.date_created,
+                'date_modified': bucketlist.date_modified
+            })
             response.status_code = 200
             return response
