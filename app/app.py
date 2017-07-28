@@ -278,3 +278,18 @@ def create_app(config_name):
                 'message':'an error ocuured try again'
             })    
                 
+    @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["DELETE"])  
+    @auth_token  
+    def delete_item(bid, item_id,user_id,*args, **kwargs):
+        item = Item.query.filter_by(bucketlist_id=bid).filter_by(
+                    id=item_id).first() 
+        if not item:
+            abort(404)
+                   
+        if request.method == "DELETE":
+            item.delete()
+            response = jsonify({
+                "message": "Item {} has been successfully deleted"
+                .format(item.name)})
+            response.status_code = 200
+            return response            
