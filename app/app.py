@@ -196,3 +196,55 @@ def create_app(config_name):
             })
             response.status_code = 200
             return response
+    
+    @app.route("/api/bucketlists/<int:id>/items/", methods=["POST", "GET"])
+    @auth_token
+    def create_items(id,user_id,*args, **kwargs):
+        """create a bucket item """
+        bucketlist = BucketList.query.filter_by(id=id).first()
+        if not bucketlist:
+            abort(404)
+
+        if request.method == "POST":
+            name = request.data.get("name")
+           
+            if  BucketList.query.filter_by(name = name).first() is not None:
+                response = jsonify({'name':'The item already exist'})
+                response.status_code = 403
+                return response
+                
+            elif name != '':
+                item = Item(name=name, bucketlist_id=id)
+                item.save()
+                response = jsonify({
+                    "id": item.id,
+                    "name": item.name,
+                    "date_created": item.date_created,
+                    "date_modified": item.date_modified,
+                    "bucketlist_id": item.bucketlist_id,
+                    })
+
+                response.status_code = 201
+                return response
+            else:
+                response = jsonify({
+                    'message': 'oops! you need to fill the name field'
+                })
+                response.status_code = 403
+                return response
+                
+        elif request.method == "GET":
+            items = Item.query.filter_by(bucketlist_id=id)
+            results = []
+
+            for item in items:
+                obj = {
+                    "id": item.id,
+                    "name": item.name,
+                    "date_created": item.date_created,
+                    "date_modified": item.date_modified,
+                    "bucketlist_id": item.bucketlist_id,
+                }
+                results.append(obj)
+            return make_response(jsonify(results)), 200
+                
