@@ -1,3 +1,4 @@
+
 import json
 from functools import wraps
 
@@ -54,6 +55,8 @@ def create_app(config_name):
                     return func(user_id=user_id, *args, **kwargs)
         
         return wrapper
+              
+        
     @app.route('/api/bucketlists/auth/register/', methods=["POST"])
     def register_user():
         username = request.data.get('username')
@@ -156,7 +159,7 @@ def create_app(config_name):
                 response = jsonify(content)
                 response.status_code = 200
                 return response
-
+                
 
     @app.route('/api/bucketlists/<int:bid>/', methods=['GET', 'PUT', 'DELETE'])
     @auth_token
@@ -196,7 +199,8 @@ def create_app(config_name):
             })
             response.status_code = 200
             return response
-    
+
+
     @app.route("/api/bucketlists/<int:id>/items/", methods=["POST", "GET"])
     @auth_token
     def create_items(id,user_id,*args, **kwargs):
@@ -247,6 +251,7 @@ def create_app(config_name):
                 }
                 results.append(obj)
             return make_response(jsonify(results)), 200
+            
 
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["PUT"])  
     @auth_token  
@@ -276,8 +281,7 @@ def create_app(config_name):
         else:
             response = jsonify({
                 'message':'an error ocuured try again'
-            })    
-                
+            })
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["DELETE"])  
     @auth_token  
     def delete_item(bid, item_id,user_id,*args, **kwargs):
@@ -292,8 +296,9 @@ def create_app(config_name):
                 "message": "Item {} has been successfully deleted"
                 .format(item.name)})
             response.status_code = 200
-            return response            
-
+            return response
+                
+    
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["GET"])  
     @auth_token  
     def get_item(bid, item_id,user_id,*args, **kwargs):
@@ -320,4 +325,4 @@ def create_app(config_name):
                         
 
 
-    return app    
+    return app

@@ -5,7 +5,7 @@ class Config(object):
     Common configurations
     """
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres:cj@localhost:5432/bucketlist"
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_KEY = 'this is a very long string'
   
 class DevelopmentConfig(Config):
     """
