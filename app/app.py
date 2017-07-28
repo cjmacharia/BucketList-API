@@ -54,7 +54,7 @@ def create_app(config_name):
                     return func(user_id=user_id, *args, **kwargs)
         
         return wrapper
-    @app.route('/api/bucketlists/auth/register/', methods=["POST"])
+   @app.route('/api/bucketlists/auth/register/', methods=["POST"])
     def register_user():
         username = request.data.get('username')
         email = request.data.get('email')
@@ -85,6 +85,77 @@ def create_app(config_name):
             #users created successfully 
             response.status_code = 201 
             return response
+
+    @app.route('/api/bucketlists/auth/login/', methods=['POST'])
+    def login():
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = User.query.filter_by(email = email).first()
+        if user and user.password_is_valid(password):
+            token = user.token_generate(user.id)
+            if token:
+                    response = jsonify({
+                        "message": "You logged in successfully.",
+                        "access_token": token.decode()
+                    })
+
+                    response.status_code = 200
+                    return response
+            else:
+                response = jsonify({
+                    "message":"An authorization error occured please try again"
+                })
+                response.status_code = 401 
+                return response 
+        else:
+            response = jsonify({
+                "message":"wrong credentials "
+            })
+            response.status_code = 401 
+            return response
+    
+    @app.route("/api/bucketlists/", methods=["POST", "GET"])
+    @auth_token
+    def create_bucketlists(user_id):
+        if request.method == "POST":
+            name = str(request.data.get('name'))
+            if name:
+                bucketlist = BucketList(name=name, created_by=user_id)
+                bucketlist.save()
+                response = jsonify({
+                    'message': "bucketlist successfully added"
+                    
+                })
+                response.status_code = 201
+                return response
+            else:
+                response = jsonify({
+                    'you need to fill the name field'
+                })
+                response.status_code = 403
+        else:
+            content = []
+            allbucketlists = BucketList.get_all(user_id)
+            for bucketlist in allbucketlists:
+                bucket = {
+                    'id': bucketlist.id,
+                    'name': bucketlist.name,
+                    'date_created': bucketlist.date_created,
+                    'date_modified': bucketlist.date_modified
+                }
+                content.append(bucket)
+            print(content)
+            if  len(content) == 0:
+                response = jsonify({
+                "error":"No bucketlists"
+                })        
+                response.status_code = 404
+                return response
+            else:
+                # Return the bucket lists                
+                response = jsonify(content)
+                response.status_code = 200
+                return response
 
 
     @app.route("/api/bucketlists/", methods=["POST", "GET"])

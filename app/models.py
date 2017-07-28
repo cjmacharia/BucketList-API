@@ -1,3 +1,4 @@
+
 from app import db
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timedelta
@@ -26,6 +27,7 @@ class User(db.Model):
         """
         self.username = username
         self.password = Bcrypt().generate_password_hash(password).decode()
+
         self.email = email
 
     def password_is_valid(self, password):
