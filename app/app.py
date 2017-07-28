@@ -293,3 +293,31 @@ def create_app(config_name):
                 .format(item.name)})
             response.status_code = 200
             return response            
+
+    @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["GET"])  
+    @auth_token  
+    def get_item(bid, item_id,user_id,*args, **kwargs):
+        item = Item.query.filter_by(bucketlist_id=bid).filter_by(
+                    id=item_id).first()   
+        if not item:
+            abort(404)
+                  
+        if request.method == "GET":
+            all_items = Item.query.filter_by(id=item_id)
+            results = []
+
+            for item in all_items:
+                obj = {
+                    "id": item.id,
+                    "name": item.name,
+                    "date_created": item.date_created,
+                    "date_modified": item.date_modified,
+                    "bucketlist_id": item.bucketlist_id,
+                }
+                results.append(obj)
+                return make_response(jsonify(results)), 200
+
+                        
+
+
+    return app    
