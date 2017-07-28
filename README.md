@@ -26,13 +26,16 @@ pip install -r requirements.txt
 Set Up Environment
 
 
-Run Database Migrations
+# Run Database Migrations
 
-# Initialize, migrate, upgrade the database
+ Initialize, migrate, upgrade the database
 
 python manage.py db init
+
 python manage.py db migrate
+
 python manage.py db upgrade
+
 Launch the Progam
 
 # Run
