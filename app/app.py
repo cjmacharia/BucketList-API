@@ -54,7 +54,7 @@ def create_app(config_name):
                     return func(user_id=user_id, *args, **kwargs)
         
         return wrapper
-   @app.route('/api/bucketlists/auth/register/', methods=["POST"])
+    @app.route('/api/bucketlists/auth/register/', methods=["POST"])
     def register_user():
         username = request.data.get('username')
         email = request.data.get('email')
@@ -247,4 +247,34 @@ def create_app(config_name):
                 }
                 results.append(obj)
             return make_response(jsonify(results)), 200
+
+    @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["PUT"])  
+    @auth_token  
+    def update_item(bid, item_id,user_id,*args, **kwargs):
+        item = Item.query.filter_by(bucketlist_id=bid).filter_by(
+                    id=item_id).first()
+    
+        if not item:
+            abort(404)
+
+        if request.method == "PUT":
+            name = request.data.get('name')
+            if name:
+                item.name = name
+                item.save()
+                response = jsonify({
+                    "message":"item successfuly updated"
+                })
+                response.status_code = 200
+                return response
+            else:
+                response = jsonify({
+                    'message': 'oops! you need to fill the name field'
+                })
+                response.status_code = 403
+                return response 
+        else:
+            response = jsonify({
+                'message':'an error ocuured try again'
+            })    
                 
