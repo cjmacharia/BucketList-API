@@ -54,6 +54,39 @@ def create_app(config_name):
                     return func(user_id=user_id, *args, **kwargs)
         
         return wrapper
+    @app.route('/api/bucketlists/auth/register/', methods=["POST"])
+    def register_user():
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        if email is None:
+            response = jsonify({'error': 'email field cannot be blank'})
+            response.status_code = 401
+            return response
+        elif username is None:
+            response = jsonify({'error': 'name field cannot be blank'})
+            response.status_code = 401
+            return response
+        elif password is None:
+            response = jsonify ({'error': 'password field has to be field'})
+            response.status_code = 401
+            return response
+        elif User.query.filter_by(email = email).first() is not None:
+            response = jsonify({'error': 'user already exists'})
+            # return conflict error 
+            response.status_code = 409 
+            return response
+        else:
+            user = User(username=username, password=password,
+                                    email=email)
+            user.save()
+            response = jsonify({'message': 'welcome loggen in user'
+            })
+            #users created successfully 
+            response.status_code = 201 
+            return response
+
+
     @app.route("/api/bucketlists/", methods=["POST", "GET"])
     def create_bucketlists():
         if request.method == "POST":
