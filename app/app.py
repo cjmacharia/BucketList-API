@@ -32,7 +32,7 @@ def create_app(config_name):
             if not token:
                 # If there's no token provided
                 response = {
-                    "message": "Register or log in to access this resource"
+                    "message": "Register or login to be able to view this page"
                 }
                 return make_response(jsonify(response)), 401
 
@@ -67,7 +67,7 @@ def create_app(config_name):
             response.status_code = 401
             return response
         elif username is None:
-            response = jsonify({'error': 'name field cannot be blank'})
+            response = jsonify({'error': 'username field cannot be blank'})
             response.status_code = 401
             return response
         elif password is None:
@@ -123,17 +123,24 @@ def create_app(config_name):
         if request.method == "POST":
             name = str(request.data.get('name'))
             if name:
-                bucketlist = BucketList(name=name, created_by=user_id)
-                bucketlist.save()
-                response = jsonify({
-                    'message': "bucketlist successfully added"
-                    
-                })
-                response.status_code = 201
-                return response
+                if BucketList.query.filter_by(name = name).first() is not None:
+                    response = jsonify({
+                        'message':"the bucket list already exists"
+                    })
+                    response.status_code = 403
+                    return response 
+                else:                   
+                    bucketlist = BucketList(name=name, created_by=user_id)
+                    bucketlist.save()
+                    response = jsonify({
+                        'message': "bucketlist successfully added"
+                        
+                    })
+                    response.status_code = 201
+                    return response
             else:
                 response = jsonify({
-                    'you need to fill the name field'
+                    'message':'you need to fill the name field'
                 })
                 response.status_code = 403
         else:
@@ -147,12 +154,11 @@ def create_app(config_name):
                     'date_modified': bucketlist.date_modified
                 }
                 content.append(bucket)
-            print(content)
             if  len(content) == 0:
                 response = jsonify({
                 "error":"No bucketlists"
                 })        
-                response.status_code = 404
+                response.status_code = 403
                 return response
             else:
                 # Return the bucket lists                
@@ -207,12 +213,13 @@ def create_app(config_name):
         """create a bucket item """
         bucketlist = BucketList.query.filter_by(id=id).first()
         if not bucketlist:
-            abort(404)
+            abort(404) 
+               
 
         if request.method == "POST":
             name = request.data.get("name")
            
-            if  BucketList.query.filter_by(name = name).first() is not None:
+            if  Item.query.filter_by(name = name).first() is not None:
                 response = jsonify({'name':'The item already exist'})
                 response.status_code = 403
                 return response
@@ -240,7 +247,6 @@ def create_app(config_name):
         elif request.method == "GET":
             items = Item.query.filter_by(bucketlist_id=id)
             results = []
-
             for item in items:
                 obj = {
                     "id": item.id,
@@ -250,7 +256,18 @@ def create_app(config_name):
                     "bucketlist_id": item.bucketlist_id,
                 }
                 results.append(obj)
-            return make_response(jsonify(results)), 200
+            if  len(results) == 0:
+                response = jsonify({
+                "error":"No items in this bucket"
+                })        
+                response.status_code = 403
+                return response 
+            else:   
+                response = jsonify({
+                    'message':"item added successfully"
+                })
+                response.status_code =  200
+                return response
             
 
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["PUT"])  
