@@ -55,11 +55,11 @@ URL Endpoint	|               HTTP requests   | access| status|
 /api/bucketlists/auth/login/	  |     POST	| Login and retrieve token|public
 /api/bucketlists/	              |      POST	|Create a new Bucketlist|private
 /api/bucketlists/	              |      GET	|     Retrieve all bucketlists for user|private
-/api/bucketlists/<id>/            |  	GET	    | Retrieve a bucketlist by ID | private
-/api/bucketlists/<id>/	          |      PUT	|     Update a bucketlist |private
-/api/bucketlists/<id>/	          |      DELETE	| Delete a bucketlist |private
-/api/bucketlists/<id>/items/      |     POST	| Create items in a bucketlist |private
-/api/bucketlists/<id>/items/<item_id>|	DELETE	| Delete an item in a bucketlist |prvate
-/api/bucketlists/<id>/items/<item_id>|	PUT   	|update a bucketlist item details |private
+/api/bucketlists/<bucket_id>/            |  	GET	    | Retrieve a bucketlist by ID | private
+/api/bucketlists/<bucket_id>/	          |      PUT	|     Update a bucketlist |private
+/api/bucketlists/<bucket_id>/	          |      DELETE	| Delete a bucketlist |private
+/api/bucketlists/<bucket_id>/items/      |     POST	| Create items in a bucketlist |private
+/api/bucketlists/<bucket_id>/items/<item_id>/|	DELETE	| Delete an item in a bucketlist |prvate
+/api/bucketlists/<bucket_id>/items/<item_id>|/	PUT   	|update a bucketlist item details |private
 
 Run the APIs on postman to ensure they are fully functioning.
