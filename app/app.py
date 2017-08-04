@@ -57,6 +57,7 @@ def create_app(config_name):
         return wrapper
 
     #pylint: disable=unused-argument
+    #pylint: disable=unused-variable
     @app.route('/api/bucketlists/auth/register/', methods=["POST"])
     def register_user():
         '''
@@ -104,11 +105,11 @@ def create_app(config_name):
         if user and user.password_is_valid(password):
             token = user.token_generate(user.id)
             if token:
-                    response = jsonify({
-                        "message": "You logged in successfully.",
-                        "access_token": token.decode()})
-                    response.status_code = 200
-                    return response
+                response = jsonify({
+                    "message": "You logged in successfully.",
+                    "access_token": token.decode()})
+                response.status_code = 200
+                return response
             else:
                 response = jsonify({
                     "message":"An authorization error occured please try again"
@@ -124,7 +125,7 @@ def create_app(config_name):
 
     @app.route("/api/bucketlists/", methods=["POST", "GET"])
     @auth_token
-    def create_bucketlists(user_id):
+    def create_bucketlists(user_id, *args, **kwargs):
         '''
         This endpoint creates a new bucketlist for the user.
         '''
@@ -151,9 +152,8 @@ def create_app(config_name):
                 })
                 response.status_code = 403
         else:
-            search_query = str(request.args.get("q", ""))
+            search_query = request.args.get('q')
             if not search_query:
-                # Paginate results for all bucketlists by default
                 limit = request.args.get("limit")
                 if request.args.get("page"):
                     # Get the page requested
@@ -161,27 +161,105 @@ def create_app(config_name):
                 else:
                     # If no page number request, start at the first one
                     page = 1
-            content = []
-            allbucketlists = BucketList.get_all(user_id)
-            for bucketlist in allbucketlists:
-                bucket = {
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified
-                }
-                content.append(bucket)
-            if  len(content) == 0:
-                response = jsonify({
-                    "error":"No bucketlists"
-                })
-                response.status_code = 403
-                return response
-            else:
+
+                if limit and int(limit) < 100:
+                    # Use the limit value from user if it exists
+                    limit = int(request.args.get("limit"))
+                else:
+                    # Set the default limit value if none was received
+                    limit = 10
+
+                result = BucketList.query.filter_by(
+                    created_by=user_id).paginate(page, limit, False)
+                if not result:
+                    response = jsonify({
+                        'error':'Ooops! You have not created any bucketlist yet!'})
+                    response.status_code = 404
+                    return response
+                if result.has_next:
+                    next_page = request.endpoint + '?page=' + str(
+                        page + 1) + '&limit=' + str(limit)
+                else:
+                    next_page = ""
+
+                if result.has_prev:
+                    previous_page = request.endpoint + '?page=' + str(
+                        page - 1) + '&limit=' + str(limit)
+                else:
+                    previous_page = ""
+
+                paginated_bucketlists = result.items
                 # Return the bucket lists
-                response = jsonify(content)
-                response.status_code = 200
-                return response
+                results = []
+
+                for bucketlist in paginated_bucketlists:
+                    # Get the items in the paginated bucketlists
+                    bucketlist = {
+                        "id": bucketlist.id,
+                        "name": bucketlist.name,
+                        "date_created": bucketlist.date_created,
+                        "date_modified": bucketlist.date_modified,
+                        "created_by": bucketlist.created_by
+                    }
+                    results.append(bucketlist)
+                    response = jsonify({
+                        "next_page": next_page,
+                        "previous_page": previous_page,
+                        "bucketlists": results
+                        })
+
+                    response.status_code = 200
+                    return response
+            elif search_query:
+                # If it was a search request
+                search = BucketList.query.filter(
+                    BucketList.name.contains(search_query)).all()
+                # If the search has returned any results
+                if search:
+                    search_results = []
+                    for bucketlist in search:
+                        bucketlist_searched = jsonify({
+                            "id": bucketlist.id,
+                            "name": bucketlist.name,
+                            "date_created": bucketlist.date_created,
+                            "date_modified": bucketlist.date_modified,
+                            "created_by": bucketlist.created_by
+                        })
+                        search_results.append(bucketlist_searched)
+                        response = jsonify(search_results)
+                        response.status_code = 200
+                        return response
+                # If there are no results after the search
+                else:
+                    response = jsonify({
+                        "message": "Bucketlist not found"
+                    })
+                    response.status_code = 404
+                    return response
+
+
+            else:
+                content = []
+                allbucketlists = BucketList.get_all(user_id)
+                for bucketlist in allbucketlists:
+                    bucket = {
+                        'id': bucketlist.id,
+                        'name': bucketlist.name,
+                        'date_created': bucketlist.date_created,
+                        'date_modified': bucketlist.date_modified
+                    }
+                    content.append(bucket)
+                if  len(content) == 0:
+                    response = jsonify({
+                        "error":"No bucketlists"
+                    })
+                    response.status_code = 403
+                    return response
+                else:
+                    # Return the bucket lists
+                    response = jsonify(content)
+                    response.status_code = 200
+                    return response
 
 
     @app.route('/api/bucketlists/<int:bid>/', methods=['GET', 'PUT', 'DELETE'])
@@ -197,7 +275,6 @@ def create_app(config_name):
             })
             response.status_code = 404
             return response
-
         if request.method == 'DELETE':
             bucketlist.delete()
             return {"message": "bucketlist {} deleted successfully".format(bucketlist.id)}, 200
@@ -281,18 +358,18 @@ def create_app(config_name):
                 response = jsonify({
                     'message' : "item added successfully"
                 })
-                response.status_code =  200
+                response.status_code = 200
                 return response
 
 
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["PUT"])
     @auth_token
-    def update_item(bid, item_id,user_id,*args, **kwargs):
+    def update_item(bid, item_id, user_id, *args, **kwargs):
         '''
         This endpoint update items in a bucket list.
         '''
         item = Item.query.filter_by(bucketlist_id=bid).filter_by(
-                    id=item_id).first()
+            id=item_id).first()
 
         if not item:
             abort(404)
@@ -331,7 +408,7 @@ def create_app(config_name):
             item.delete()
             response = jsonify({
                 "message": "Item {} has been successfully deleted"
-                .format(item.name)})
+                           .format(item.name)})
             response.status_code = 200
             return response
 
@@ -343,7 +420,7 @@ def create_app(config_name):
         This endpoint gets items of a bucket list.
         '''
         item = Item.query.filter_by(bucketlist_id=bid).filter_by(
-                    id=item_id).first()
+            id=item_id).first()
         if not item:
             abort(404)
 
