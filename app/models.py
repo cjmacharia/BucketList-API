@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-from app import db
-from flask_bcrypt import Bcrypt
 import jwt
+from .app import db
+from flask_bcrypt import Bcrypt
 SECRET_KEY = 'this is a very long string'
 
 class User(db.Model):
