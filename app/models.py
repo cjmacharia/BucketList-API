@@ -1,9 +1,7 @@
+from datetime import datetime, timedelta
 from app import db
 from flask_bcrypt import Bcrypt
-from datetime import datetime, timedelta
 import jwt
-from functools import wraps
-from flask import current_app, jsonify, request, g
 SECRET_KEY = 'this is a very long string'
 
 class User(db.Model):
@@ -33,7 +31,7 @@ class User(db.Model):
         """
         Checks the password against it's hash to validates the user's password
         """
-        return Bcrypt().check_password_hash(self.password, password)    
+        return Bcrypt().check_password_hash(self.password, password)
 
     def token_generate(self, user_id):
         """function to generate a token """
@@ -41,14 +39,14 @@ class User(db.Model):
             """we set up a payload with the expiry time issued date and the subject """
             payload = {
                 'iat':datetime.utcnow(),
-                'exp':datetime.utcnow()+timedelta(hours = 1),
+                'exp':datetime.utcnow()+timedelta(hours=1),
                 'sub':user_id
                 }
             return jwt.encode(
                 payload,
                 SECRET_KEY,
-                algorithm='HS256')  
-        
+                algorithm='HS256')
+
         except Exception as e:
             return 'error ocurred'
 
@@ -58,7 +56,7 @@ class User(db.Model):
         Decodes access token from Authorization Header
         """
         try:
-            # decode the token if provided and returns the user id 
+            # decode the token if provided and returns the user id
             payload = jwt.decode(token, SECRET_KEY)
             return payload["sub"]
 
@@ -68,15 +66,14 @@ class User(db.Model):
 
         except jwt.InvalidTokenError:
             # checks if the token is valid
-            return "the token is invalid"              
+            return "the token is invalid"
 
     def save(self):
         """
         Save a user to the database
         """
         db.session.add(self)
-        db.session.commit()    
-
+        db.session.commit()
 
 class BucketList(db.Model):
     """
@@ -90,13 +87,13 @@ class BucketList(db.Model):
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
-    created_by = db.Column(db.Integer, db.ForeignKey(User.id))                          
+    created_by = db.Column(db.Integer, db.ForeignKey(User.id))
 
     def __init__(self, name, created_by):
         self.name = name
         self.created_by = created_by
-    
-    
+
+
     def save(self):
         """
         save a bucketlist
@@ -118,7 +115,7 @@ class BucketList(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_items(self):
+    def get_items():
         """
         Returns all the items in a bucketlist
         """
@@ -133,15 +130,15 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))  
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
-                              onupdate=db.func.current_timestamp())      
+                              onupdate=db.func.current_timestamp())
 
-    def __init__(self, name,bucketlist_id):
+    def __init__(self, name, bucketlist_id):
         self.name = name
         self.bucketlist_id = bucketlist_id
-    
+
     def save(self):
         """
         save an item
@@ -150,16 +147,15 @@ class Item(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all_items(self):
+    def get_all_items():
         """
         get all items
         """
-        return Item.query.filter_by(bucketlist_id=BucketList_id)
+        return Item.query.filter_by(bucketlist_id=BucketList.id)
 
     def delete(self):
         """
         Delete an item
         """
         db.session.delete(self)
-        db.session.commit() 
-
+        db.session.commit()

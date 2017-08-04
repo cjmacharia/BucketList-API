@@ -6,7 +6,7 @@ from app.app import create_app, db
 
 class AuthTestCases(unittest.TestCase):
     """
-    Tests for  authentication 
+    Tests for  authentication
     """
     def setUp(self):
         self.app = create_app(config_name="testing")
@@ -48,9 +48,12 @@ class AuthTestCases(unittest.TestCase):
         self.assertEqual(second_result.status_code, 409)
 
     def test_register_with_a_nonexistent_url(self):
+        """
+        Test registration with an invalid url
+        """
         response = self.client().post('/bucketlist/api/auth/regist/', data=self.user_data)
-        self.assertEqual(response.status_code, 404)    
-    
+        self.assertEqual(response.status_code, 404)
+
     def test_login(self):
         """
         Test that a user can login successfully
@@ -100,11 +103,14 @@ class AuthTestCases(unittest.TestCase):
 
         self.assertEqual(result.status_code, 401)
 
-    
+
     def test_login_with_a_nonexistent_url(self):
+        """
+        Test login with invalid url
+        """
         response = self.client().post('/bucketlist/api/auth/logon/', data=self.user_data)
-        self.assertEqual(response.status_code, 404)     
-        
+        self.assertEqual(response.status_code, 404)
+
     def test_login_missing_username(self):
         """
         Test that missing email
