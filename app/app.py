@@ -6,8 +6,10 @@ from flask_sqlalchemy import SQLAlchemy
 # local import
 from instance.config import app_config
 
+#pylint: disable=C0103
 # initialize db
 db = SQLAlchemy()
+
 
 def create_app(config_name):
     """function wraps the creation of a new Flask object,
@@ -54,7 +56,7 @@ def create_app(config_name):
 
         return wrapper
 
-
+    #pylint: disable=unused-argument
     @app.route('/api/bucketlists/auth/register/', methods=["POST"])
     def register_user():
         '''
@@ -110,7 +112,7 @@ def create_app(config_name):
             else:
                 response = jsonify({
                     "message":"An authorization error occured please try again"
-                })
+                    })
                 response.status_code = 401
                 return response
         else:
@@ -140,7 +142,6 @@ def create_app(config_name):
                     bucketlist.save()
                     response = jsonify({
                         'message': "bucketlist successfully added"
-
                     })
                     response.status_code = 201
                     return response
@@ -172,7 +173,7 @@ def create_app(config_name):
                 content.append(bucket)
             if  len(content) == 0:
                 response = jsonify({
-                "error":"No bucketlists"
+                    "error":"No bucketlists"
                 })
                 response.status_code = 403
                 return response
@@ -199,7 +200,7 @@ def create_app(config_name):
 
         if request.method == 'DELETE':
             bucketlist.delete()
-            return { "message": "bucketlist {} deleted successfully".format(bucketlist.id)}, 200
+            return {"message": "bucketlist {} deleted successfully".format(bucketlist.id)}, 200
         elif request.method == 'PUT':
             name = request.data.get('name')
             bucketlist.name = name
@@ -233,7 +234,7 @@ def create_app(config_name):
         if request.method == "POST":
             name = request.data.get("name")
 
-            if  Item.query.filter_by(name = name).first() is not None:
+            if  Item.query.filter_by(name=name).first() is not None:
                 response = jsonify({'name':'The item already exist'})
                 response.status_code = 403
                 return response
@@ -272,13 +273,13 @@ def create_app(config_name):
                 results.append(obj)
             if  len(results) == 0:
                 response = jsonify({
-                "error":"No items in this bucket"
+                    "error":"No items in this bucket"
                 })
                 response.status_code = 403
                 return response
             else:
                 response = jsonify({
-                    'message':"item added successfully"
+                    'message' : "item added successfully"
                 })
                 response.status_code =  200
                 return response
@@ -322,8 +323,7 @@ def create_app(config_name):
         '''
         This endpoint deletes items from a bucketlist.
         '''
-        item = Item.query.filter_by(bucketlist_id=bid).filter_by(
-                    id=item_id).first()
+        item = Item.query.filter_by(bucketlist_id=bid).filter_by(id=item_id).first()
         if not item:
             abort(404)
 
