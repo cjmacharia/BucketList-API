@@ -1,6 +1,4 @@
-[![Code Health](https://landscape.io/github/cjmash/BucketList-API/restful-api/landscape.svg?style=flat-square)](https://landscape.io/github/cjmash/BucketList-API/restful-api)    [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5998ad5777634cb591392198de69ad3c)](https://www.codacy.com/app/cjmash/BucketList-API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=cjmash/BucketList-API&amp;utm_campaign=Badge_Grade)  [![Build Status](https://travis-ci.org/cjmash/BucketList-API.svg?branch=resful-api)](https://travis-ci.org/cjmash/BucketList-API)
-
-
+[![Code Health](https://landscape.io/github/cjmash/BucketList-API/restful-api/landscape.svg?style=flat-square)](https://landscape.io/github/cjmash/BucketList-API/restful-api)    [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5998ad5777634cb591392198de69ad3c)](https://www.codacy.com/app/cjmash/BucketList-API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=cjmash/BucketList-API&amp;utm_campaign=Badge_Grade)  [![Build Status](https://travis-ci.org/cjmash/BucketList-API.svg?branch=restful-api)](https://travis-ci.org/cjmash/BucketList-API)
 
 # BucketList Application API
 
