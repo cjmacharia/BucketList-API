@@ -16,7 +16,7 @@ def create_app(config_name):
     and returns it after it's loaded up with
     configuration settings """
 
-    from models import BucketList, Item, User
+    from .models import BucketList, Item, User
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
