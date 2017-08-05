@@ -55,8 +55,9 @@ URL Endpoint	|               HTTP requests   | access| status|
 /api/bucketlists/<bucket_id>/            |  	GET	    | Retrieve a bucketlist by ID | private
 /api/bucketlists/<bucket_id>/	          |      PUT	|     Update a bucketlist |private
 /api/bucketlists/<bucket_id>/	          |      DELETE	| Delete a bucketlist |private
-/api/bucketlists/<bucket_id>/items/      |     POST	| Create items in a bucketlist |private
+/api/bucketlists/<bucket_id>/items/  |           GET    |Retrive items in a given bucket list|private
+/api/bucketlists/<bucket_id>/items/     |     POST	| Create items in a bucketlist |private
 /api/bucketlists/<bucket_id>/items/<item_id>/|	DELETE	| Delete an item in a bucketlist |prvate
-/api/bucketlists/<bucket_id>/items/<item_id>|/	PUT   	|update a bucketlist item details |private
+/api/bucketlists/<bucket_id>/items/<item_id>/|	PUT   	|update a bucketlist item details |private
 
 Run the APIs on postman to ensure they are fully functioning.
