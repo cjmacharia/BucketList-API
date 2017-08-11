@@ -67,15 +67,15 @@ def create_app(config_name):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
-        if email is None:
+        if email == "":
             response = jsonify({'error': 'email field cannot be blank'})
             response.status_code = 401
             return response
-        elif username is None:
+        elif username == "":
             response = jsonify({'error': 'username field cannot be blank'})
             response.status_code = 401
             return response
-        elif password is None:
+        elif password == "":
             response = jsonify({'error': 'password field has to be field'})
             response.status_code = 401
             return response
@@ -131,7 +131,13 @@ def create_app(config_name):
         '''
         if request.method == "POST":
             name = request.data.get('name')
-            if name:
+            if name == "":
+                response = jsonify({
+                    'message':'you need to fill the name field'
+                })
+                response.status_code = 403
+                return response
+            elif name:
                 if BucketList.query.filter_by(name=name).first() is not None:
                     response = jsonify({
                         'message':"the bucket list already exists"
@@ -146,70 +152,84 @@ def create_app(config_name):
                     })
                     response.status_code = 201
                     return response
-            else:
-                response = jsonify({
-                    'message':'you need to fill the name field'
-                })
-                response.status_code = 403
         else:
+            endpoint = "/api/bucketlists/"
             search_query = request.args.get('q')
             if not search_query:
-                limit = request.args.get("limit")
-                if request.args.get("page"):
-                    # Get the page requested
-                    page = int(request.args.get("page"))
-                else:
-                    # If no page number request, start at the first one
-                    page = 1
-
-                if limit and int(limit) < 100:
-                    # Use the limit value from user if it exists
-                    limit = int(request.args.get("limit"))
-                else:
-                    # Set the default limit value if none was received
-                    limit = 10
-
-                result = BucketList.query.filter_by(
-                    created_by=user_id).paginate(page, limit, False)
-                if not result:
-                    response = jsonify({
-                        'error':'Ooops! You have not created any bucketlist yet!'})
-                    response.status_code = 404
-                    return response
-                if result.has_next:
-                    next_page = request.endpoint + '?page=' + str(
-                        page + 1) + '&limit=' + str(limit)
-                else:
-                    next_page = ""
-
-                if result.has_prev:
-                    previous_page = request.endpoint + '?page=' + str(
-                        page - 1) + '&limit=' + str(limit)
-                else:
-                    previous_page = ""
-
-                paginated_bucketlists = result.items
-                # Return the bucket lists
-                results = []
-
-                for bucketlist in paginated_bucketlists:
-                    # Get the items in the paginated bucketlists
-                    bucketlist = {
-                        "id": bucketlist.id,
-                        "name": bucketlist.name,
-                        "date_created": bucketlist.date_created,
-                        "date_modified": bucketlist.date_modified,
+                content = []
+                allbucketlists = BucketList.get_all(user_id)
+                for bucketlist in allbucketlists:
+                    bucket = {
+                        'id': bucketlist.id,
+                        'name': bucketlist.name,
+                        'date_created': bucketlist.date_created,
+                        'date_modified': bucketlist.date_modified,
                         "created_by": bucketlist.created_by
                     }
-                    results.append(bucketlist)
+                    content.append(bucket)
+                if  len(content) == 0:
                     response = jsonify({
-                        "next_page": next_page,
-                        "previous_page": previous_page,
-                        "bucketlists": results
-                        })
-
-                    response.status_code = 200
+                        "error":"No bucketlists"
+                    })
+                    response.status_code = 403
                     return response
+                else:
+                    limit = request.args.get("limit")
+                    if request.args.get("page"):
+                        # Get the page requested
+                        page = int(request.args.get("page"))
+                    else:
+                        # If no page number request, start at the first one
+                        page = 1
+
+                    if limit and int(limit) < 100:
+                        # Use the limit value from user if it exists
+                        limit = int(request.args.get("limit"))
+                    else:
+                        # Set the default limit value if none was received
+                        limit = 10
+
+                    result = BucketList.query.filter_by(
+                        created_by=user_id).paginate(page, limit, False)
+                    if not result:
+                        response = jsonify({
+                            'error':'Ooops! You have not created any bucketlist yet!'})
+                        response.status_code = 404
+                        return response
+                    if result.has_next:
+                        next_page = request.endpoint + '?page=' + str(
+                            page + 1) + '&limit=' + str(limit)
+                    else:
+                        next_page = ""
+
+                    if result.has_prev:
+                        previous_page = request.endpoint + '?page=' + str(
+                            page - 1) + '&limit=' + str(limit)
+                    else:
+                        previous_page = ""
+
+                    paginated_bucketlists = result.items
+                    # Return the bucket lists
+                    results = []
+
+                    for bucketlist in paginated_bucketlists:
+                        # Get the items in the paginated bucketlists
+                        bucketlist = {
+                            "id": bucketlist.id,
+                            "name": bucketlist.name,
+                            "date_created": bucketlist.date_created,
+                            "date_modified": bucketlist.date_modified,
+                            "created_by": bucketlist.created_by
+                        }
+                        results.append(bucketlist)
+                        response = jsonify({
+                            "next_page": next_page,
+                            "previous_page": previous_page,
+                            "bucketlists": results
+                            })
+
+                        response.status_code = 200
+                        return response
             elif search_query:
                 # If it was a search request
                 search = BucketList.query.filter(
@@ -246,7 +266,8 @@ def create_app(config_name):
                         'id': bucketlist.id,
                         'name': bucketlist.name,
                         'date_created': bucketlist.date_created,
-                        'date_modified': bucketlist.date_modified
+                        'date_modified': bucketlist.date_modified,
+                        "created_by": bucketlist.created_by
                     }
                     content.append(bucket)
                 if  len(content) == 0:
