@@ -238,13 +238,13 @@ def create_app(config_name):
                 if search:
                     search_results = []
                     for bucketlist in search:
-                        bucketlist_searched = jsonify({
+                        bucketlist_searched = {
                             "id": bucketlist.id,
                             "name": bucketlist.name,
                             "date_created": bucketlist.date_created,
                             "date_modified": bucketlist.date_modified,
                             "created_by": bucketlist.created_by
-                        })
+                        }
                         search_results.append(bucketlist_searched)
                         response = jsonify(search_results)
                         response.status_code = 200
