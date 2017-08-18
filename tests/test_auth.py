@@ -45,7 +45,7 @@ class AuthTestCases(unittest.TestCase):
 
         result = self.client().post("/api/bucketlists/auth/register/", data=unregistered,
                                     content_type="application/json")
-        self.assertEqual(result.status_code, 401)
+        self.assertEqual(result.status_code, 400)
 
     def test_registration_without_username(self):
         """
@@ -58,7 +58,7 @@ class AuthTestCases(unittest.TestCase):
         }))
         result = self.client().post("/api/bucketlists/auth/register/", data=unregistered,
                                     content_type="application/json")
-        self.assertEqual(result.status_code, 401)   
+        self.assertEqual(result.status_code, 400)   
 
     def test_registration_without_user_password(self):
         """
@@ -72,7 +72,43 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/register/", data=unregistered,
                                     content_type="application/json")
 
-        self.assertEqual(result.status_code, 401)  
+        self.assertEqual(result.status_code, 400)  
+
+    def test_registration_with_special_characters(self):
+        """
+        test username registration with special characters
+        
+        """
+        result = self.client().post("/api/bucketlists/auth/register/", data=json.dumps(dict({
+            "username" : "collins*&",
+            "email" : "collins@gmail.com",
+            "password" : "mashcollo"
+        })), content_type="application/json")    
+        self.assertEqual(result.status_code, 403)
+
+    def test_registration_with_invalid_email(self):
+        """
+        test username registration with special characters
+        
+        """
+        result = self.client().post("/api/bucketlists/auth/register/", data=json.dumps(dict({
+            "username" : "collins",
+            "email" : "collins@gmailcom",
+            "password" : "mashcollo"
+        })), content_type="application/json")    
+        self.assertEqual(result.status_code, 403)    
+
+    def test_registration_with_short_password(self):
+        """
+        test username registration with special characters
+        
+        """
+        result = self.client().post("/api/bucketlists/auth/register/", data=json.dumps(dict({
+            "username" : "collins",
+            "email" : "collins@gmail.com",
+            "password" : "mash"
+        })), content_type="application/json")    
+        self.assertEqual(result.status_code, 403)    
 
     def test_double_registration(self):
         """

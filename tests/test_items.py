@@ -25,13 +25,13 @@ class BucketitemsTestCases(unittest.TestCase):
         self.user_data = json.dumps(dict({
             "username": "testuser",
             "email": "cj@test.com",
-            "password": "test"}))
+            "password": "testpassword"}))
         self.client().post("/api/bucketlists/auth/register/", data=self.user_data,
                            content_type="application/json")
 
         self.login_info = json.dumps(dict({
             "email": "cj@test.com",
-            "password": "test"
+            "password": "testpassword"
         }))
         # Log is as the test user and get a token
         self.login_result = self.client().post("/api/bucketlists/auth/login/",
