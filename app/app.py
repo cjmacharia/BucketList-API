@@ -171,7 +171,7 @@ def create_app(config_name):
                     response.status_code = 201
                     return response
         else:
-            endpoint = "/api/bucketlists/"
+            url = "/api/bucketlists/"
             search_query = request.args.get('q')
             if not search_query:
                 content = []
@@ -205,7 +205,7 @@ def create_app(config_name):
                         limit = int(request.args.get("limit"))
                     else:
                         # Set the default limit value if none was received
-                        limit = 10
+                        limit = 1
 
                     result = BucketList.query.filter_by(
                         created_by=user_id).paginate(page, limit, False)
@@ -215,13 +215,13 @@ def create_app(config_name):
                         response.status_code = 404
                         return response
                     if result.has_next:
-                        next_page = request.endpoint + '?page=' + str(
+                        next_page = request.url + '?page=' + str(
                             page + 1) + '&limit=' + str(limit)
                     else:
                         next_page = ""
 
                     if result.has_prev:
-                        previous_page = request.endpoint + '?page=' + str(
+                        previous_page = request.url + '?page=' + str(
                             page - 1) + '&limit=' + str(limit)
                     else:
                         previous_page = ""
