@@ -2,7 +2,7 @@ from functools import wraps
 from flask import abort, jsonify, make_response, request
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
-
+import re
 # local import
 from instance.config import app_config
 
@@ -67,17 +67,35 @@ def create_app(config_name):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
+        regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
         if email == "":
             response = jsonify({'error': 'email field cannot be blank'})
             response.status_code = 401
             return response
+        elif not re.match(regex, email):
+            response = jsonify({
+                'error':'the email needs to be a valid email'
+            })
+            response.status_code = 403
+            return response
+            
         elif username == "":
             response = jsonify({'error': 'username field cannot be blank'})
             response.status_code = 401
             return response
+        elif not re.match("^[a-zA-Z0-9_]*$", username):
+            response = jsonify({'error':
+                                'Username cannot contain special characters'})
+            response.status_code = 400
+            return response
         elif password == "":
             response = jsonify({'error': 'password field has to be field'})
             response.status_code = 401
+            return response
+        elif len(password) < 5:
+            response = jsonify({'error':
+                                'Password should be more than 5 characters'})
+            response.status_code = 400
             return response
         elif User.query.filter_by(email=email).first() is not None:
             response = jsonify({'error': 'user already exists'})
