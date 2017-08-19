@@ -15,15 +15,19 @@ use ssh
 go to the root folder
 
 cd bucketlist
+
 Create the virtual environment
 
-mkvirtualenv myenv
+$mkvirtualenv myenv
+
 Activate the virtual environment
 
-workon myenv
+$workon myenv
+
 # Install the requirements
 
-pip install -r requirements.txt
+$pip install -r requirements.txt
+
 Set Up Environment
 
 
@@ -31,17 +35,18 @@ Set Up Environment
 
  Initialize, migrate, upgrade the database
 
-python manage.py db init
+$python manage.py db init
 
-python manage.py db migrate
+$python manage.py db migrate
 
-python manage.py db upgrade
+$python manage.py db upgrade
 
 Launch the Progam
 
 # Run
 
-python run.py development
+$python run.py development
+
 Interact with the API, send http requests using Postman
 
 # API Endpoints
