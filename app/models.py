@@ -115,11 +115,11 @@ class BucketList(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_items():
+    def get_items(bucketlist_id):
         """
         Returns all the items in a bucketlist
         """
-        return Item.query.filter_by(bucketlist_id=BucketList.id)
+        return Item.query.filter_by(bucketlist_id=bucketlist_id)
 
 
 
@@ -147,11 +147,11 @@ class Item(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all_items():
+    def get_all_items(bucketlist_id):
         """
         get all items
         """
-        return Item.query.filter_by(bucketlist_id=BucketList.id)
+        return Item.query.filter_by(bucketlist_id=bucketlist_id)
 
     def delete(self):
         """

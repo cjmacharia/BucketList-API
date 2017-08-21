@@ -1,9 +1,11 @@
+import os
+
 class Config(object):
     """
     Common configurations
     """
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:cj@localhost:5432/bucketlist"
-    SECRET_KEY = 'this is a very long string'
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    SECRET_KEY = os.getenv('SECRET', 'this is a very long string')
 
 class DevelopmentConfig(Config):
     """
@@ -23,7 +25,6 @@ class ProductionConfig(Config):
     """
     Production configurations
     """
-
     DEBUG = False
 
 # pylint: disable=C0103

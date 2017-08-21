@@ -171,7 +171,7 @@ def create_app(config_name):
                     response.status_code = 201
                     return response
         else:
-            url = "/api/bucketlists/"
+            url = "/api/bucketlists"
             search_query = request.args.get('q')
             if not search_query:
                 content = []
@@ -225,10 +225,11 @@ def create_app(config_name):
                             page - 1) + '&limit=' + str(limit)
                     else:
                         previous_page = ""
-                    print (result)
+
                     paginated_bucketlists = result.items
                     # Return the bucket lists
                     results = []
+
                     for bucketlist in paginated_bucketlists:
                         # Get the items in the paginated bucketlists
                         bucketlist = {
@@ -239,7 +240,6 @@ def create_app(config_name):
                             "created_by": bucketlist.created_by
                         }
                         results.append(bucketlist)
-                        print(results)
                         response = jsonify({
                             "next_page": next_page,
                             "previous_page": previous_page,
@@ -359,7 +359,11 @@ def create_app(config_name):
                 item = Item(name=name, bucketlist_id=id)
                 item.save()
                 response = jsonify({
-                    "message":"item successfully addded to this bucketlist"
+                    "id": item.id,
+                    "name": item.name,
+                    "date_created": item.date_created,
+                    "date_modified": item.date_modified,
+                    "bucketlist_id": item.bucketlist_id,
                     })
 
                 response.status_code = 201
@@ -372,7 +376,7 @@ def create_app(config_name):
                 return response
 
         elif request.method == "GET":
-            items = Item.get_all_items(id)
+            items = Item.query.filter_by(bucketlist_id=id)
             results = []
             for item in items:
                 obj = {
@@ -390,7 +394,9 @@ def create_app(config_name):
                 response.status_code = 403
                 return response
             else:
-                response = jsonify(results)
+                response = jsonify({
+                    'message' : "item added successfully"
+                })
                 response.status_code = 200
                 return response
 
