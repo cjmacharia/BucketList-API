@@ -1,5 +1,4 @@
-import os
-from functools import wrap
+from functools import wraps
 from flask import abort, jsonify, make_response, request
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
@@ -19,7 +18,7 @@ def create_app(config_name):
 
     from .models import BucketList, Item, User
     app = FlaskAPI(__name__, instance_relative_config=True)
-    app.config.from_object(os.getenv(['APP_SETTINGS']))
+    app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -78,7 +77,8 @@ def create_app(config_name):
                 'error':'the email need to be a valid email'
             })
             response.status_code = 403
-            return response     
+            return response
+     
         elif username == "":
             response = jsonify({'error': 'username field cannot be blank'})
             response.status_code = 400
