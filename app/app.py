@@ -77,8 +77,7 @@ def create_app(config_name):
                 'error':'the email need to be a valid email'
             })
             response.status_code = 403
-            return response
-            
+            return response     
         elif username == "":
             response = jsonify({'error': 'username field cannot be blank'})
             response.status_code = 400
@@ -156,7 +155,7 @@ def create_app(config_name):
                 response.status_code = 403
                 return response
             elif name:
-                if BucketList.query.filter_by(name=name).first() is not None:
+                if BucketList.query.filter_by(created_by=user_id).filter_by(name=name).first() is not None:
                     response = jsonify({
                         'message':"the bucket list already exists"
                     })
@@ -225,7 +224,6 @@ def create_app(config_name):
                             page - 1) + '&limit=' + str(limit)
                     else:
                         previous_page = ""
-                    print (result)
                     paginated_bucketlists = result.items
                     # Return the bucket lists
                     results = []
@@ -239,7 +237,6 @@ def create_app(config_name):
                             "created_by": bucketlist.created_by
                         }
                         results.append(bucketlist)
-                        print(results)
                         response = jsonify({
                             "next_page": next_page,
                             "previous_page": previous_page,
