@@ -155,6 +155,12 @@ def create_app(config_name):
                 })
                 response.status_code = 403
                 return response
+            elif not re.match("^[a-zA-Z0-9_]*$", name):
+                response = jsonify({'error':
+                                'bucketlist name cannot contain special characters'})
+                response.status_code = 403
+                return response
+
             elif name:
                 if BucketList.query.filter_by(created_by=user_id).filter_by(name=name).first() is not None:
                     response = jsonify({
@@ -200,13 +206,12 @@ def create_app(config_name):
                         # If no page number request, start at the first one
                         page = 1
 
-                    if limit and int(limit) < 100:
+                    if limit and int(limit) < 10:
                         # Use the limit value from user if it exists
                         limit = int(request.args.get("limit"))
                     else:
                         # Set the default limit value if none was received
-                        limit = 1
-
+                        limit = 10
                     result = BucketList.query.filter_by(
                         created_by=user_id).paginate(page, limit, False)
                     if not result:
@@ -226,6 +231,7 @@ def create_app(config_name):
                     else:
                         previous_page = ""
                     paginated_bucketlists = result.items
+                    print (paginated_bucketlists)
                     # Return the bucket lists
                     results = []
                     for bucketlist in paginated_bucketlists:
@@ -238,14 +244,14 @@ def create_app(config_name):
                             "created_by": bucketlist.created_by
                         }
                         results.append(bucketlist)
-                        response = jsonify({
-                            "next_page": next_page,
-                            "previous_page": previous_page,
-                            "bucketlists": results
-                            })
+                    response = jsonify({
+                        "next_page": next_page,
+                        "previous_page": previous_page,
+                        "bucketlists": results
+                        })
 
-                        response.status_code = 200
-                        return response
+                    response.status_code = 200
+                    return response
             elif search_query:
                 # If it was a search request
                 search = BucketList.query.filter(
@@ -359,7 +365,11 @@ def create_app(config_name):
                 response = jsonify({
                     "message":"item successfully addded to this bucketlist"
                     })
-
+            elif not re.match("^[a-zA-Z0-9_]*$",name):
+                response = jsonify({'error':
+                                'item name cannot contain special characters'})
+                response.status_code = 403
+                return response
                 response.status_code = 201
                 return response
             else:

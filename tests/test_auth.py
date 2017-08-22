@@ -20,8 +20,6 @@ class AuthTestCases(unittest.TestCase):
 
         with self.app.app_context():
             # create all tables
-            db.session.close()
-            db.drop_all()
             db.create_all()
 
     def test_registration(self):
@@ -196,6 +194,14 @@ class AuthTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/auth/login/", data=res,
                                     content_type="application/json")
         self.assertEqual(result.status_code, 401)
+
+    def tearDown(self):
+        """teardown all initialized variables."""
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
+    
 
 if __name__ == "__main__":
     unittest.main()
