@@ -155,27 +155,30 @@ def create_app(config_name):
                 })
                 response.status_code = 403
                 return response
-            elif not re.match("^[a-zA-Z0-9_]*$", name):
-                response = jsonify({'error':
-                                'bucketlist name cannot contain special characters'})
-                response.status_code = 403
-                return response
-
+                
             elif name:
-                if BucketList.query.filter_by(created_by=user_id).filter_by(name=name).first() is not None:
-                    response = jsonify({
-                        'message':"the bucket list already exists"
-                    })
+                stripped_name = name.strip()
+                name = stripped_name
+                if len(stripped_name) == 0:
+                    response = jsonify({'error':
+                    'Your first value  must NOT !! be a space'})
                     response.status_code = 403
-                    return response
+                    return response   
                 else:
-                    bucketlist = BucketList(name=name, created_by=user_id)
-                    bucketlist.save()
-                    response = jsonify({
-                        'message': "bucketlist successfully added"
-                    })
-                    response.status_code = 201
-                    return response
+                    if BucketList.query.filter_by(created_by=user_id).filter_by(name=name).first() is not None:
+                        response = jsonify({
+                            'message':"the bucket list already exists"
+                        })
+                        response.status_code = 403
+                        return response
+                    else:
+                        bucketlist = BucketList(name=name, created_by=user_id)
+                        bucketlist.save()
+                        response = jsonify({
+                            'message': "bucketlist successfully added"
+                        })
+                        response.status_code = 201
+                        return response
         else:
             url = "/api/bucketlists/"
             search_query = request.args.get('q')
@@ -231,7 +234,6 @@ def create_app(config_name):
                     else:
                         previous_page = ""
                     paginated_bucketlists = result.items
-                    print (paginated_bucketlists)
                     # Return the bucket lists
                     results = []
                     for bucketlist in paginated_bucketlists:
@@ -353,31 +355,35 @@ def create_app(config_name):
 
         if request.method == "POST":
             name = request.data.get("name")
-
-            if  Item.query.filter_by(name=name).first() is not None:
-                response = jsonify({'name':'The item already exist'})
-                response.status_code = 403
-                return response
-
-            elif name != '':
-                item = Item(name=name, bucketlist_id=id)
-                item.save()
-                response = jsonify({
-                    "message":"item successfully addded to this bucketlist"
-                    })
-            elif not re.match("^[a-zA-Z0-9_]*$",name):
-                response = jsonify({'error':
-                                'item name cannot contain special characters'})
-                response.status_code = 403
-                return response
-                response.status_code = 201
-                return response
-            else:
+            if name == "":
                 response = jsonify({
                     'message': 'oops! you need to fill the name field'
                 })
                 response.status_code = 403
                 return response
+            elif name: 
+                stripped_name = name.split()
+                name = str(stripped_name)
+                print(name)
+                if len(name) == 0:
+                    response = jsonify({'error':
+                                    'Your first value  must NOT !! be a space'})
+                    response.status_code = 403
+                    return response
+                if  Item.query.filter_by(bucketlist_id=id).filter_by(name=name).first() is not None:
+                    response = jsonify({'name':'The item already exist'})
+                    response.status_code = 403
+                    return response
+                else:
+                    item = Item(name=name, bucketlist_id=id)
+                    item.save()
+                    response = jsonify({
+                        "message":"item successfully addded to this bucketlist"
+                                                    })
+                    response.status_code = 201
+                    return response          
+            
+                
 
         elif request.method == "GET":
             items = Item.get_all_items(id)

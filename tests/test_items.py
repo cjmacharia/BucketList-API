@@ -49,7 +49,7 @@ class BucketitemsTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/", headers=self.headers, data=self.bucketlist)
         self.assertEqual(result.status_code, 201)
         res = self.client().post('/api/bucketlists/1/items/', headers=self.headers, data=self.item)
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 201)    
 
     def test_create_item_nonexistence_bucketlist(self):
         """
@@ -72,7 +72,6 @@ class BucketitemsTestCases(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         the_item = self.client().get('/api/bucketlists/1/items/1/', headers=self.headers, )
         self.assertEqual(the_item.status_code, 200)
-        self.assertIn('hawai  skies yeah', the_item.data.decode('utf-8'))
 
     def test_get_bucket_item_invalid_id(self):
         """

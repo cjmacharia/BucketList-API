@@ -14,7 +14,7 @@ class BucketlistTestCases(unittest.TestCase):
         self.app = create_app(config_name="testing")
         #set up test client for the application
         self.client = self.app.test_client
-        self.bucketlist = {'name': 'Go for skydiving '}
+        self.bucketlist = {'name': 'Go for skydiving'}
 
         # bind the app to the current context
         with self.app.app_context():
@@ -49,7 +49,7 @@ class BucketlistTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/", headers=self.headers,
                                     data=self.bucketlist)
         self.assertEqual(result.status_code, 201)
-
+                           
     def test_create_bucketlist_without_username(self):
         """
         Test the creation of a bucketlist through the API via POST without username field
