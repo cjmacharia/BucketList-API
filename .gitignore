@@ -1,8 +1,10 @@
 #folders
 venv/
 migrations/
+.DS_Store
 
 #compiled files
 *.pyc
+
 
 .env
