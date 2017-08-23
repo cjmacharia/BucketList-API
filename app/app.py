@@ -17,44 +17,13 @@ def create_app(config_name):
     configuration settings """
 
     from .models import BucketList, Item, User
+    from .decorator import auth_token
+
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
-
-    def auth_token(func):
-        """function that wraps a wrapper function"""
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # Check for the authentication token
-            token = request.headers.get("Authorization")
-            if not token:
-                # If there's no token provided
-                response = {
-                    "message": "Register or login to be able to view this page"
-                }
-                return make_response(jsonify(response)), 401
-
-            else:
-                # Attempt to decode the token and get the user id
-                access_token = token.split(" ")[1]
-                user_id = User.decode_token(access_token)
-
-                if isinstance(user_id, str):
-                    # User id does not exist so payload is an error message
-                    message = user_id
-                    response = jsonify({
-                        "message": message
-                    })
-
-                    response.status_code = 401
-                    return response
-
-                else:
-                    return func(user_id=user_id, *args, **kwargs)
-
-        return wrapper
 
     #pylint: disable=unused-argument
     #pylint: disable=unused-variable
@@ -64,9 +33,9 @@ def create_app(config_name):
         This endpoint uses the post request method to add users in your database.
         It acceps data in json format with username and password as keys.
         '''
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
+        username = str(request.data.get('username'))
+        email = str(request.data.get('email'))
+        password = str(request.data.get('password'))
         regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
         if email == "":
             response = jsonify({'error': 'email field cannot be blank'})
@@ -117,8 +86,8 @@ def create_app(config_name):
         The token expires after an hour. This can be adjusted by setting
         the 'exp'private Claim to whatever timeout you prefer.
         '''
-        email = request.data.get('email')
-        password = request.data.get('password')
+        email = str(request.data.get('email'))
+        password = str(request.data.get('password'))
         user = User.query.filter_by(email=email).first()
         if user and user.password_is_valid(password):
             token = user.token_generate(user.id)
@@ -257,7 +226,9 @@ def create_app(config_name):
             elif search_query:
                 # If it was a search request
                 search = BucketList.query.filter(
-                    BucketList.name.contains(search_query)).all()
+                    BucketList.name.ilike(search_query)).all()
+
+                print(search)
                 # If the search has returned any results
                 if search:
                     search_results = []
