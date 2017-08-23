@@ -45,11 +45,11 @@ def login_user_api():
 def create_bucketlists_getapi(user_id, *args, **kwargs):
     """endpoint returning get  details.
     ---
-    parameters:
-      - name: name
-        in: raw 
+    parameters: 
+      - name: Authorization
+        in: header 
         type: string
-        required: true 
+        required: true     
     
     """ 
 @app.route("/api/bucketlists/", methods=["POST"])
@@ -59,10 +59,30 @@ def create_bucketlists_postapi(user_id, *args, **kwargs):
     ---
     parameters:
       - name: name
-        in: raw 
+        in: formData 
         type: string
         required: true 
+      - name: Authorization
+        in: header 
+        type: string
+        required: true     
     
     """     
-
+@app.route('/api/bucketlists/<int:bid>/', methods=['POST'])
+@auth_token
+def bucketlist_manipulation_getapi(bid, user_id):
+    """endpoint returning post bucketlist details.
+    ---
+    parameters:
+      - name: name
+        in: formData 
+        type: string
+        required: true 
+      - name: Authorization
+        in: header 
+        type: string
+        required: true     
+    
+    """
+    
 app.run()

@@ -20,6 +20,7 @@ def create_app(config_name):
     from .decorator import auth_token
 
     app = FlaskAPI(__name__, instance_relative_config=True)
+    app.url_map.strict_slashes = False
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -226,7 +227,7 @@ def create_app(config_name):
             elif search_query:
                 # If it was a search request
                 search = BucketList.query.filter(
-                    BucketList.name.ilike(search_query)).all()
+                    BucketList.name.ilike('%' + search_query + '%')).all()
 
                 print(search)
                 # If the search has returned any results
