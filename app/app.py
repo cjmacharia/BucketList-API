@@ -48,7 +48,7 @@ def create_app(config_name):
             })
             response.status_code = 403
             return response
-     
+
         elif username == "":
             response = jsonify({'error': 'username field cannot be blank'})
             response.status_code = 400
@@ -125,7 +125,7 @@ def create_app(config_name):
                 })
                 response.status_code = 403
                 return response
-                
+
             elif name:
                 stripped_name = name.strip()
                 name = stripped_name
@@ -133,7 +133,7 @@ def create_app(config_name):
                     response = jsonify({'error':
                     'Your first value  must NOT !! be a space'})
                     response.status_code = 403
-                    return response   
+                    return response
                 else:
                     if BucketList.query.filter_by(created_by=user_id).filter_by(name=name).first() is not None:
                         response = jsonify({
@@ -171,14 +171,13 @@ def create_app(config_name):
                     response.status_code = 403
                     return response
                 else:
-                    limit = request.args.get("limit")
                     if request.args.get("page"):
                         # Get the page requested
                         page = int(request.args.get("page"))
                     else:
                         # If no page number request, start at the first one
                         page = 1
-
+                    limit = request.args.get("limit")
                     if limit and int(limit) < 10:
                         # Use the limit value from user if it exists
                         limit = int(request.args.get("limit"))
@@ -228,8 +227,6 @@ def create_app(config_name):
                 # If it was a search request
                 search = BucketList.query.filter(
                     BucketList.name.ilike('%' + search_query + '%')).all()
-
-                print(search)
                 # If the search has returned any results
                 if search:
                     search_results = []
@@ -326,20 +323,19 @@ def create_app(config_name):
 
 
         if request.method == "POST":
-            name = request.data.get("name")
+            name = str(request.data.get("name"))
+            print(name)
             if name == "":
                 response = jsonify({
                     'message': 'oops! you need to fill the name field'
                 })
                 response.status_code = 403
                 return response
-            elif name: 
+            elif name:
                 stripped_name = name.split()
                 name = str(stripped_name)
-                print(name)
                 if len(name) == 0:
-                    response = jsonify({'error':
-                                    'Your first value  must NOT !! be a space'})
+                    response = jsonify({'error':'Your first value  must NOT !! be a space'})
                     response.status_code = 403
                     return response
                 if  Item.query.filter_by(bucketlist_id=id).filter_by(name=name).first() is not None:
@@ -347,15 +343,14 @@ def create_app(config_name):
                     response.status_code = 403
                     return response
                 else:
-                    item = Item(name=name, bucketlist_id=id)
+                    item = Item(name=str(name), bucketlist_id=id)
                     item.save()
                     response = jsonify({
-                        "message":"item successfully addded to this bucketlist"
-                                                    })
+                        "message":"item successfully addded to this bucketlist"})
                     response.status_code = 201
-                    return response          
-            
-                
+                    return response
+
+
 
         elif request.method == "GET":
             items = Item.get_all_items(id)
@@ -363,7 +358,7 @@ def create_app(config_name):
             for item in items:
                 obj = {
                     "id": item.id,
-                    "name": item.name,
+                    "name": item.get_name(),
                     "date_created": item.date_created,
                     "date_modified": item.date_modified,
                     "bucketlist_id": item.bucketlist_id,
@@ -394,7 +389,7 @@ def create_app(config_name):
             abort(404)
 
         if request.method == "PUT":
-            name = request.data.get('name')
+            name = str(request.data.get('name'))
             if name:
                 item.name = name
                 item.save()

@@ -146,6 +146,9 @@ class Item(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def get_name(self):
+        return self.name.strip('[]')
+
     @staticmethod
     def get_all_items(bucketlist_id):
         """
