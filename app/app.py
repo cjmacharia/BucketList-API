@@ -225,7 +225,7 @@ def create_app(config_name):
                     return response
             elif search_query:
                 # If it was a search request
-                search = BucketList.query.filter(
+                search = BucketList.query.filter_by(created_by=user_id).filter(
                     BucketList.name.ilike('%' + search_query + '%')).all()
                 # If the search has returned any results
                 if search:
@@ -324,7 +324,6 @@ def create_app(config_name):
 
         if request.method == "POST":
             name = str(request.data.get("name"))
-            print(name)
             if name == "":
                 response = jsonify({
                     'message': 'oops! you need to fill the name field'
