@@ -43,7 +43,7 @@ def login_user_api():
 @app.route("/api/bucketlists/", methods=["GET"])
 @auth_token
 def create_bucketlists_get():
-    """endpoint returning get  details.
+    """endpoint for  getting bucket  details.
     ---
     parameters:
       - name: Authorization
@@ -71,7 +71,7 @@ def create_bucketlists_post():
 @app.route('/api/bucketlists/<int:bid>/', methods=['PUT'])
 @auth_token
 def bucketlist_manipulation_put():
-    """endpoint returning post bucketlist details.
+    """endpoint  updating bucket details.
     ---
     parameters:
       - name: name
@@ -91,7 +91,7 @@ def bucketlist_manipulation_put():
 @app.route('/api/bucketlists/<int:bid>/', methods=['GET'])
 @auth_token
 def bucketlist_manipulation_get():
-    """endpoint returning post bucketlist details.
+    """endpoint for getting bucketlist details.
     ---
     parameters:
       - name: Authorization
@@ -106,7 +106,7 @@ def bucketlist_manipulation_get():
 @app.route('/api/bucketlists/<int:bid>/', methods=['DELETE'])
 @auth_token
 def bucketlist_manipulation_detete():
-    """endpoint returning post bucketlist details.
+    """endpoint for deleting a  bucket.
     ---
     parameters:
       - name: Authorization
@@ -122,7 +122,7 @@ def bucketlist_manipulation_detete():
 @app.route("/api/bucketlists/<int:id>/items/", methods=["GET"])
 @auth_token
 def create_items_get():
-    """endpoint returning post bucketlist details.
+    """endpoint returning get bucketlist items.
     ---
     parameters:
       - name: Authorization
@@ -137,7 +137,7 @@ def create_items_get():
 @app.route("/api/bucketlists/<int:id>/items/", methods=["POST"])
 @auth_token
 def create_items_post():
-    """endpoint returning  bucketlist item details.
+    """endpoint for creating a  bucketlist item.
     ---
     parameters:
       - name: name
@@ -156,7 +156,7 @@ def create_items_post():
 @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["PUT"])
 @auth_token
 def update_item_put():
-    """endpoint returning  bucketlist item details.
+    """endpoint for updating  bucketlist item .
     ---
     parameters:
       - name: name
@@ -179,7 +179,7 @@ def update_item_put():
 @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["DELETE"])
 @auth_token
 def update_item_delete():
-    """endpoint returning  bucketlist item details.
+    """endpoint for deleting  a bucketlist item .
     ---
     parameters:
       - name: Authorization
