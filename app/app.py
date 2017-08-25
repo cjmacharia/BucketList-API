@@ -322,10 +322,13 @@ def create_app(config_name):
         '''
         This endpoint creates a new items in a bucket list.
         '''
+        bucketlist = BucketList.query.filter_by(id=id).first()
+        if not bucketlist:
+            abort(404)
+
+
         if request.method == "POST":
             name = str(request.data.get("name"))
-            if not BucketList.exists(name, user_id):
-                    return make_response(jsonify(dict(message="item herre"), 409))
             if name == "":
                 response = jsonify({
                     'message': 'oops! you need to fill the name field'
