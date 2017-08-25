@@ -294,6 +294,11 @@ def create_app(config_name):
             return {"message": "bucketlist {} deleted successfully".format(bucketlist.id)}, 200
         elif request.method == 'PUT':
             name = request.data.get('name')
+            bucket = BucketList.query.filter_by(id=bid, created_by=user_id).first()
+            if bucket.name != name:
+                if BucketList.exists(name, user_id):
+                    return make_response(jsonify(dict(message="Bucket exists"), 409))
+
             bucketlist.name = name
             bucketlist.save()
             response = jsonify({"message":"Successfully updated"})
@@ -317,13 +322,10 @@ def create_app(config_name):
         '''
         This endpoint creates a new items in a bucket list.
         '''
-        bucketlist = BucketList.query.filter_by(id=id).first()
-        if not bucketlist:
-            abort(404)
-
-
         if request.method == "POST":
             name = str(request.data.get("name"))
+            if not BucketList.exists(name, user_id):
+                    return make_response(jsonify(dict(message="item herre"), 409))
             if name == "":
                 response = jsonify({
                     'message': 'oops! you need to fill the name field'

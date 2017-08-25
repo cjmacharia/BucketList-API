@@ -121,6 +121,13 @@ class BucketList(db.Model):
         """
         return Item.query.filter_by(bucketlist_id=bucketlist_id)
 
+    @staticmethod
+    def exists(bucket_name, created_by):
+        """
+        Returns if a bucket exists with that name
+        """
+        bucket = BucketList.query.filter_by(name=bucket_name, created_by=created_by).first()
+        return True if bucket else False
 
 
 class Item(db.Model):
@@ -134,6 +141,7 @@ class Item(db.Model):
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
+
 
     def __init__(self, name, bucketlist_id):
         self.name = name
