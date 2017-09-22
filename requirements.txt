@@ -20,7 +20,6 @@ Flask-Cors==3.0.3
 Flask-Migrate==2.0.4
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.2
-functools32==3.2.3.post2
 idna==2.5
 ipaddress==1.0.18
 isort==4.2.15
