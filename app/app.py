@@ -90,6 +90,14 @@ def create_app(config_name):
         email = str(request.data.get('email'))
         password = str(request.data.get('password'))
         user = User.query.filter_by(email=email).first()
+        if email == "":
+            response = jsonify({'error': 'email field cannot be blank'})
+            response.status_code = 400
+            return response
+        if password == "":
+            response = jsonify({'error': 'password field has to be field'})
+            response.status_code = 400
+            return response
         if user and user.password_is_valid(password):
             token = user.token_generate(user.id)
             if token:
@@ -106,7 +114,7 @@ def create_app(config_name):
                 return response
         else:
             response = jsonify({
-                "message":"wrong credentials "
+                "error":"wrong credentials "
             })
             response.status_code = 401
             return response
@@ -121,7 +129,7 @@ def create_app(config_name):
             name = request.data.get('name')
             if name == "":
                 response = jsonify({
-                    'message':'you need to fill the name field'
+                    'error':'you need to fill the name field'
                 })
                 response.status_code = 403
                 return response
@@ -137,7 +145,7 @@ def create_app(config_name):
                 else:
                     if BucketList.query.filter_by(created_by=user_id).filter_by(name=name).first() is not None:
                         response = jsonify({
-                            'message':"the bucket list already exists"
+                            'error':"the bucket list already exists"
                         })
                         response.status_code = 403
                         return response
@@ -164,12 +172,7 @@ def create_app(config_name):
                         "created_by": bucketlist.created_by
                     }
                     content.append(bucket)
-                if  len(content) == 0:
-                    response = jsonify({
-                        "error":"No bucketlists"
-                    })
-                    response.status_code = 403
-                    return response
+
                 else:
                     if request.args.get("page"):
                         # Get the page requested
@@ -192,13 +195,13 @@ def create_app(config_name):
                         response.status_code = 404
                         return response
                     if result.has_next:
-                        next_page = request.url + '?page=' + str(
+                        next_page =  "/api/bucketlists/" + '?page=' + str(
                             page + 1) + '&limit=' + str(limit)
                     else:
                         next_page = ""
 
                     if result.has_prev:
-                        previous_page = request.url + '?page=' + str(
+                        previous_page =  "/api/bucketlists/"+ '?page=' + str(
                             page - 1) + '&limit=' + str(limit)
                     else:
                         previous_page = ""
@@ -293,12 +296,19 @@ def create_app(config_name):
             bucketlist.delete()
             return {"message": "bucketlist {} deleted successfully".format(bucketlist.id)}, 200
         elif request.method == 'PUT':
-            name = request.data.get('name')
+            name = request.data.get('name').strip()
+            if name == "":
+                response = jsonify({
+                    'error': 'oops! you need to fill the name field'
+                })
+                response.status_code = 403
+                return response
             bucket = BucketList.query.filter_by(id=bid, created_by=user_id).first()
             if bucket.name != name:
                 if BucketList.exists(name, user_id):
-                    return make_response(jsonify(dict(message="Bucket exists"), 409))
-
+                    response = jsonify({"error":"item already exists"})
+                    response.status_code = 409
+                    return response
             bucketlist.name = name
             bucketlist.save()
             response = jsonify({"message":"Successfully updated"})
@@ -325,37 +335,37 @@ def create_app(config_name):
         bucketlist = BucketList.query.filter_by(id=id).first()
         if not bucketlist:
             abort(404)
-
-
         if request.method == "POST":
             name = str(request.data.get("name"))
             if name == "":
                 response = jsonify({
-                    'message': 'oops! you need to fill the name field'
+                    'error': 'oops! you need to fill the name field'
                 })
                 response.status_code = 403
                 return response
             elif name:
-                stripped_name = name.split()
+                stripped_name = name.strip()
                 name = str(stripped_name)
                 if len(name) == 0:
                     response = jsonify({'error':'Your first value  must NOT !! be a space'})
                     response.status_code = 403
                     return response
                 if  Item.query.filter_by(bucketlist_id=id).filter_by(name=name).first() is not None:
-                    response = jsonify({'name':'The item already exist'})
+                    response = jsonify({'error':'The item already exist'})
                     response.status_code = 403
                     return response
-                else:
+                if name :
                     item = Item(name=str(name), bucketlist_id=id)
                     item.save()
                     response = jsonify({
                         "message":"item successfully addded to this bucketlist"})
                     response.status_code = 201
                     return response
-
-
-
+                else:
+                    response = jsonify({
+                        "error":"the item can not be empty"})
+                    response.status_code = 403
+                    return response
         elif request.method == "GET":
             items = Item.get_all_items(id)
             results = []
@@ -368,17 +378,10 @@ def create_app(config_name):
                     "bucketlist_id": item.bucketlist_id,
                 }
                 results.append(obj)
-            if  len(results) == 0:
-                response = jsonify({
-                    "error":"No items in this bucket"
-                })
-                response.status_code = 403
-                return response
             else:
                 response = jsonify(results)
                 response.status_code = 200
                 return response
-
 
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["PUT"])
     @auth_token
@@ -395,6 +398,13 @@ def create_app(config_name):
         if request.method == "PUT":
             name = str(request.data.get('name'))
             if name:
+                stripped_name = name.strip()
+                name = stripped_name
+                if len(stripped_name) == 0:
+                    response = jsonify({'error':
+                    'Your first value  must NOT !! be a space'})
+                    response.status_code = 403
+                    return response
                 item.name = name
                 item.save()
                 response = jsonify({
@@ -404,14 +414,10 @@ def create_app(config_name):
                 return response
             else:
                 response = jsonify({
-                    'message': 'oops! you need to fill the name field'
+                    'error': 'oops! you need to fill he item field '
                 })
                 response.status_code = 403
                 return response
-        else:
-            response = jsonify({
-                'message':'an error ocuured try again'
-            })
     @app.route("/api/bucketlists/<int:bid>/items/<int:item_id>/", methods=["DELETE"])
     @auth_token
     def delete_item(bid, item_id, user_id, *args, **kwargs):

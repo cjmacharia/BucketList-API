@@ -49,7 +49,7 @@ class BucketlistTestCases(unittest.TestCase):
         result = self.client().post("/api/bucketlists/", headers=self.headers,
                                     data=self.bucketlist)
         self.assertEqual(result.status_code, 201)
-                           
+
     def test_create_bucketlist_without_username(self):
         """
         Test the creation of a bucketlist through the API via POST without username field
