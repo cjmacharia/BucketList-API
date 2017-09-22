@@ -13,7 +13,7 @@ def auth_token(func):
                 if not token:
                     # If there's no token provided
                     response = {
-                        "message": "Register or login to be able to view this page"
+                        "error": "Register or login to be able to view this page"
                     }
                     return make_response(jsonify(response)), 401
 
@@ -26,7 +26,7 @@ def auth_token(func):
                         # User id does not exist so payload is an error message
                         message = user_id
                         response = jsonify({
-                            "message": message
+                            "tokenerror": error
                         })
 
                         response.status_code = 401
@@ -36,7 +36,7 @@ def auth_token(func):
                         return func(user_id=user_id, *args, **kwargs)
             except Exception:
 
-                response = {'message':'the token has no bearer'}
+                response = {'tokenerror':'the token has expired or has no bearer'}
                 return make_response(jsonify(response)), 401
 
         return wrapper
