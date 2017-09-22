@@ -1,10 +1,12 @@
 import os
 from flasgger import Swagger
 from app.app import create_app
+from flask_cors import CORS
 from app.decorator import auth_token
 #pylint: disable=C0103
 config_name = os.getenv('APP_SETTINGS')
 app = create_app(config_name)
+CORS(app)
 swagger = Swagger(app)
 
 @app.route('/api/bucketlists/auth/register/', methods=["POST"])
