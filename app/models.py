@@ -39,7 +39,7 @@ class User(db.Model):
             """we set up a payload with the expiry time issued date and the subject """
             payload = {
                 'iat':datetime.utcnow(),
-                'exp':datetime.utcnow()+timedelta(hours=4000),
+                'exp':datetime.utcnow()+timedelta(hours=1245),
                 'sub':user_id
                 }
             return jwt.encode(
@@ -140,7 +140,7 @@ class Item(db.Model):
     name = db.Column(db.String(255))
     bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
     bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
-    status = db.Column(db.String(255), server_default='Not Done')
+    status = db.Column(db.Boolean, default=False)
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
 
