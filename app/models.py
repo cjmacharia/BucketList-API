@@ -39,7 +39,7 @@ class User(db.Model):
             """we set up a payload with the expiry time issued date and the subject """
             payload = {
                 'iat':datetime.utcnow(),
-                'exp':datetime.utcnow()+timedelta(hours=1245),
+                'exp':datetime.utcnow()+timedelta(hours=4000),
                 'sub':user_id
                 }
             return jwt.encode(
