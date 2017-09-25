@@ -397,7 +397,6 @@ def create_app(config_name):
 
         if request.method == "PUT":
             name = str(request.data.get('name'))
-            status = str(request.data.get('done', False))
             if name:
                 stripped_name = name.strip()
                 name = stripped_name
@@ -407,8 +406,6 @@ def create_app(config_name):
                     response.status_code = 403
                     return response
                 item.name = name
-                if status:
-                    item.status = True
                 item.save()
                 response = jsonify({
                     "message":"item successfuly updated"
