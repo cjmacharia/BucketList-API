@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import jsonify, make_response, request
+from jwt.exceptions import InvalidTokenError
 from .models import User
 
 def auth_token(func):
@@ -34,8 +35,7 @@ def auth_token(func):
 
                     else:
                         return func(user_id=user_id, *args, **kwargs)
-            except Exception:
-
+            except InvalidTokenError:
                 response = {'tokenerror':'the token has expired or has no bearer'}
                 return make_response(jsonify(response)), 401
 

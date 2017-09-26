@@ -253,7 +253,6 @@ def create_app(config_name):
                     response.status_code = 404
                     return response
 
-
             else:
                 content = []
                 allbucketlists = BucketList.get_all(user_id)
@@ -266,12 +265,6 @@ def create_app(config_name):
                         "created_by": bucketlist.created_by
                     }
                     content.append(bucket)
-                if  len(content) == 0:
-                    response = jsonify({
-                        "error":"No bucketlists"
-                    })
-                    response.status_code = 403
-                    return response
                 else:
                     # Return the bucket lists
                     response = jsonify(content)
@@ -372,7 +365,7 @@ def create_app(config_name):
             for item in items:
                 obj = {
                     "id": item.id,
-                    "name": item.get_name(),
+                    "name": item.name,
                     "date_created": item.date_created,
                     "date_modified": item.date_modified,
                     "bucketlist_id": item.bucketlist_id,

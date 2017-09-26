@@ -155,15 +155,12 @@ class Item(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def get_name(self):
-        return self.name.strip('[]')
-
     @staticmethod
     def get_all_items(bucketlist_id):
         """
         get all items
         """
-        return Item.query.filter_by(bucketlist_id=bucketlist_id)
+        return Item.query.filter_by(bucketlist_id=bucketlist_id).all()
 
     def delete(self):
         """
