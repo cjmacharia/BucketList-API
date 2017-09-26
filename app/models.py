@@ -163,7 +163,7 @@ class Item(db.Model):
         """
         get all items
         """
-        return Item.query.filter_by(bucketlist_id=bucketlist_id)
+        return Item.query.filter_by(bucketlist_id=bucketlist_id).all()
 
     def delete(self):
         """
