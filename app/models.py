@@ -34,6 +34,7 @@ class User(db.Model):
         return Bcrypt().check_password_hash(self.password, password)
 
     def reset_password(self, password):
+    
         self.password = Bcrypt().generate_password_hash(password).decode()
 
     def token_generate(self, user_id):
@@ -142,7 +143,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
 
