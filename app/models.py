@@ -142,7 +142,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey(BucketList.id))
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
 
