@@ -60,7 +60,7 @@ class BucketitemsTestCases(unittest.TestCase):
         self.assertEqual(result.status_code, 201)
         res = self.client().post('/api/bucketlists/30/items/', headers=self.headers,
                                  data=self.item)
-        self.assertEqual(res.status_code, 401)
+        self.assertEqual(res.status_code, 404)
 
     # def test_get_bucket_item_by_id(self):
     #     """
