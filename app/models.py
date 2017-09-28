@@ -33,6 +33,9 @@ class User(db.Model):
         """
         return Bcrypt().check_password_hash(self.password, password)
 
+    def reset_password(self, password):
+        self.password = Bcrypt().generate_password_hash(password).decode()
+
     def token_generate(self, user_id):
         """function to generate a token """
         try:

@@ -119,6 +119,31 @@ def create_app(config_name):
             response.status_code = 401
             return response
 
+    @app.route('/api/bucketlists/auth/changepassword/', methods=['PUT'])
+    def reset_pass():
+        email = str(request.data.get('email'))
+        password = str(request.data.get('password'))
+        if email == "":
+            response = jsonify({'error': 'email field cannot be blank'})
+            response.status_code = 400
+            return response
+        if password == "":
+            response = jsonify({'error': 'password field has to be field'})
+            response.status_code = 400
+            return response
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.reset_password(password) 
+            user.save()
+            response = jsonify({'message': 'password succesfully updated'})
+            #users created successfully
+            response.status_code = 201
+            return response
+        else:
+            response = jsonify({'error': 'Email does not exist'})
+            response.status_code = 409
+            return response
+
     @app.route("/api/bucketlists/", methods=["POST", "GET"])
     @auth_token
     def create_bucketlists(user_id, *args, **kwargs):
