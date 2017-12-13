@@ -1,0 +1,9 @@
+#folders
+venv/
+*.DS_Store
+
+#compiled files
+*.pyc
+
+
+.env
