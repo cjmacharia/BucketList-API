@@ -41,9 +41,30 @@ jobs:
 
           environment:
             FLASK_APP: "run.py"
-            SECRET: $secret_key
+            SECRET: $SECRET
             APP_SETTINGS: "development"
             DATABASE_URL: "postgres://circleci@localhost:5432/test_db"
+  deploy_production:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: bake a docker image
+          command: |
+            echo "create a docker image for cloud"
+            docker build --no-cache -t gcr.io/packer-192412/python-api:$CIRCLE_SHA1 .
+
 
 workflows:
   version: 2
@@ -51,3 +72,4 @@ workflows:
     jobs:
       - build
       - test
+      - deploy_production

@@ -1,11 +1,9 @@
 FROM alpine:3.6
 MAINTAINER james collins
-RUN   apk add curl python3 python3-dev jpeg-dev bash  make g++ zlib-dev git gcc postgresql-dev --no-cache  --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3
-RUN mkdir api
-WORKDIR api
-COPY . api
-RUN  pip3 install requirements
+RUN   apk add curl python3 python3-dev linux-headers musl-dev python-dev build-base openssl libffi-dev jpeg-dev bash libffi make g++ zlib-dev git gcc postgresql-dev --no-cache
+COPY . BucketList-API
+WORKDIR BucketList-API
+RUN  pip3 install -r requirements.txt
 EXPOSE 8080
 CMD python3 manage.py db init\
     python3 manage.py db migrate\
