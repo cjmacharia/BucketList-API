@@ -2,13 +2,15 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python3
+      - image: circleci/python
       - image: postgres:9.6
     steps:
       - checkout
       - run:
           name: view content
-          command: ls
+          command: |
+            ls
+            which python
       - run:
           name: install python requirements
           command: pip3 install requirements.txt
