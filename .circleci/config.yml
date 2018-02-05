@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python
+      - image: postgres:9.6
+    working_directory: ~/python
+    steps:
+      - checkout
+      - run:
+          name: install python requirements
+          command: pip install requreiments
