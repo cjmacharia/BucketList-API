@@ -2,15 +2,52 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python
-      - image: postgres:9.6
+      - image: circleci/python:3.6.1
     steps:
       - checkout
       - run:
-          name: view content
+          name: view my content
           command: |
             ls
             which python
       - run:
           name: install python requirements
-          command: pip3 install requirements.txt
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+  test:
+    docker:
+      - image: circleci/python:3.6.1
+        environment:
+          PG_HOST: 'localhost'
+          PG_USER: 'circleci'
+      - image: postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: 'circleci'
+          POSTGRES_DB: 'test_db'
+    steps:
+      - checkout
+      - run:
+          name: run tests
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+            python3 manage.py db init
+            python3 manage.py db migrate
+            python3 manage.py db upgrade
+            pytest
+
+          environment:
+            FLASK_APP: "run.py"
+            SECRET: $secret_key
+            APP_SETTINGS: "development"
+            DATABASE_URL: "postgres://circleci@localhost:5432/test_db"
+
+workflows:
+  version: 2
+  build_test:
+    jobs:
+      - build
+      - test
