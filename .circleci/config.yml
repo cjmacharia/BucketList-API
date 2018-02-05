@@ -4,7 +4,6 @@ jobs:
     docker:
       - image: circleci/python
       - image: postgres:9.6
-    working_directory: ~/python
     steps:
       - checkout
       - run:
