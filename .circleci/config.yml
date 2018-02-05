@@ -9,4 +9,4 @@ jobs:
       - checkout
       - run:
           name: install python requirements
-          command: pip install requreiments
+          command: pip install requreiments.txt
