@@ -12,8 +12,6 @@ pipeline {
                 sh 'python3 -m venv venv'
                 sh '. venv/bin/activate'
                 sh 'pip install --upgrade pip'
-                sh 'apt-get install postgresql-devel'
-                sh 'apt-get install libpq-dev'
                 sh 'pip install -r requirements.txt'
             }
         }
