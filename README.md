@@ -4,7 +4,7 @@
 
 # Installation and Setup
 
-Clone the repo
+Clone the repository
 
 git clone https://github.com/cjmash/BucketList-API.git
 
