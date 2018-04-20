@@ -16,7 +16,7 @@ pipeline {
         stage('test') {
             steps {
                 sh 'pip install -r requirements.txt'
-                sh 'export APP_SETTING "development"'
+                sh 'export APP_SETTING="development"'
                  sh 'python3 manage.py db init'
                  sh 'python3 manage.py db migrate'
                  sh 'python3 manage.py db upgrade'
