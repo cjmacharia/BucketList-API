@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker { 
-            image 'cjmash/cp:cp2' 
+            image 'cjmash/cp:cp3' 
             args '-u root:root'
         }
     }
