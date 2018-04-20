@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker { 
-            image 'python:3.6.1-alpine' 
+            image 'docker pull cjmash/jenkins' 
             args '-u root:root'
         }
     }
