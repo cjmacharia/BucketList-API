@@ -1,8 +1,7 @@
 pipeline {
     agent {
         docker { 
-            image 'python:3.6' 
-            image 'postgres'
+            image 'cjmash/cp:cp1' 
             args '-u root:root'
         }
     }
