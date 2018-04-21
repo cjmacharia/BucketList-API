@@ -13,7 +13,7 @@ pipeline {
                  sh ''' 
                      /etc/init.d/postgresql start'
                      su postgres
-                     psql -U postgres -c "create database test_db"
+                     psql -U postgres -c create database test_db
                     export APP_SETTING="development"
                     export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
                     '''
