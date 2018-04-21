@@ -11,7 +11,9 @@ pipeline {
                 sh 'python --version'
                 sh 'pip3 install -r requirements.txt'
                  sh ''' 
-                    sudo -u postgres psql -c 'create database test_db'
+                     /etc/init.d/postgresql start'
+                     su postgres
+                     psql -U postgres -c "create database test_db"
                     export APP_SETTING="development"
                     export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
                     '''
