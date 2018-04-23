@@ -9,7 +9,7 @@ pipeline {
         stage('build') {
             steps {
                 sh 'python --version'
-                sh 'pg_config --version'
+                sh './create_db.sh'
                 sh 'pip3 install -r requirements.txt'
                  sh ''' 
                      /etc/init.d/postgresql start'
