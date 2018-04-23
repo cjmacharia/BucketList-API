@@ -9,6 +9,7 @@ pipeline {
         stage('build') {
             steps {
                 sh 'python --version'
+                sh 'sudo chmod +x create_db.sh'
                 sh './create_db.sh'
                 sh 'pip3 install -r requirements.txt'
                  sh ''' 
