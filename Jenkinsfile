@@ -12,7 +12,6 @@ pipeline {
                 sh 'chmod +x create_db.sh'
                 sh './create_db.sh'
                  sh ''' 
-                     su postgres
                      createdb test_db
                     export APP_SETTING="development"
                     export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
