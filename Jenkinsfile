@@ -5,6 +5,10 @@ pipeline {
             args '-u root:root'
         }
     }
+    environment {
+        // 'This value is exported to all commands in this stage'
+        DATABASE_URL = "postgresql://postgres:postgres@35.204.7.185:5432/test_db"
+      }
     stages {
         stage('build') {
             steps {
@@ -17,13 +21,14 @@ pipeline {
                     export APP_SETTING="test"
                     export FLASK_APP="run.py"
                     export SECRET="this is a very long string"
-                    export DATABASE_URL="postgresql://postgres:postgres@35.204.7.185:5432/test_db"
+                    export DATABASE_URL=$DATABASE_URL
                     '''
                 sh 'pip3 install -r requirements.txt'
             }
         }
         stage('test') {
             steps {
+                sh 'export DATABASE_URL=$DATABASE_URL'
                  sh  'pytest'
             }
         }
