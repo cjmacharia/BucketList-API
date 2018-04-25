@@ -17,7 +17,7 @@ pipeline {
                     export APP_SETTING="test"
                     export FLASK_APP="run.py"
                     export SECRET="this is a very long string"
-                    export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
+                    export DATABASE_URL="postgresql://postgres:postgres@35.204.7.185:5432/test_db"
                     '''
                 sh 'pip3 install -r requirements.txt'
             }
