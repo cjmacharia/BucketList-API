@@ -14,9 +14,9 @@ pipeline {
                  sh ''' 
                  
                     psql -U postgres -p 5432 -c "CREATE DATABASE test_db  OWNER postgres"
-                    export APP_SETTING="development"
+                    export APP_SETTING="test"
                     export FLASK_APP="run.py"
-                     export SECRET="this is a very long string"
+                    export SECRET="this is a very long string"
                     export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
                     '''
                 sh 'pip3 install -r requirements.txt'
@@ -24,9 +24,6 @@ pipeline {
         }
         stage('test') {
             steps {
-                 sh 'python3 manage.py db init'
-                 sh 'python3 manage.py db migrate'
-                 sh 'python3 manage.py db upgrade'
                  sh  'pytest'
             }
         }
