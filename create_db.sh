@@ -4,5 +4,6 @@ sed -i 's/32/0/g' /etc/postgresql/9.5/main/pg_hba.conf
 sed -i '/listen_address/s/^#//g' /etc/postgresql/9.5/main/postgresql.conf
 sed -i '/unix_socket_permissions/s/^#//g' /etc/postgresql/9.5/main/postgresql.conf
 sed -i 's/localhost/*/g' /etc/postgresql/9.5/main/postgresql.conf
+su postgres
 service postgresql restart
 
