@@ -11,13 +11,13 @@ pipeline {
                 sh 'python --version'
                 sh 'chmod +x create_db.sh'
                 sh './create_db.sh'
-                sh 'pip3 install -r requirements.txt'
                  sh ''' 
                      su postgres
                      createdb test_db
                     export APP_SETTING="development"
                     export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
                     '''
+                sh 'pip3 install -r requirements.txt'
             }
         }
         stage('test') {
