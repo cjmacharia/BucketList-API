@@ -12,6 +12,7 @@ pipeline {
                 sh 'chmod +x create_db.sh'
                 sh './create_db.sh'
                  sh ''' 
+                    chmod 0600 ~/.pgpass
                     psql -U postgres -p 5432 -c "CREATE DATABASE flask_db  OWNER postgres"
                     export APP_SETTING="development"
                     export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"
