@@ -19,6 +19,7 @@ pipeline {
                     export FLASK_APP="run.py"
                     export SECRET="this is a very long string"
                     '''
+                sh 'service postgresql start'
                 sh 'pip3 install -r requirements.txt'
             }
         }
