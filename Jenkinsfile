@@ -25,7 +25,7 @@ pipeline {
         }
         stage('test') {
             steps {
-                sh 'export DATABASE_URL="postgresql://postgres:postgres@35.204.7.185:5432/test_db"'
+                sh 'export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/test_db"'
                  sh  'pytest'
             }
         }
